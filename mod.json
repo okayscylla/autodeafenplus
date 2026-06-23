@@ -1,0 +1,65 @@
+{
+	"geode": "5.7.1",
+	"gd": {
+		"win": "2.2081"
+	},
+	"id": "okayscylla.autodeafenplus",
+	"name": "AutoDeafen+",
+	"version": "v1.0.0",
+	"developer": "okayscylla",
+	"description": "Autodeafen for both Linux and Windows",
+	"dependencies": {
+		"geode.node-ids": ">=v1.23.3"
+	},
+	"tags": [
+		"enhancement",
+		"utility",
+		"offline"
+	],
+	"settings": {
+		"general": {
+			"type": "title",
+			"name": "General Settings"
+		},
+		"enable": {
+			"type": "bool",
+			"name": "Enable AutoDeafen+",
+			"description": "Controls whether AutoDeafen+ should enable itself",
+			"default": true
+		},
+		"undeafen": {
+			"type": "bool",
+			"name": "Enable Undeafening",
+			"description": "Controls if AutoDeafen+ will undeafen you at a certain percentage",
+			"default": false
+		},
+		"miscellaneous": {
+			"type": "title",
+			"name": "Miscellaneous"
+		},
+		"discord_keybind": {
+			"type": "keybind",
+			"name": "Discord Deafen Keybind",
+			"description": "Used to set what keybind Discord uses to trigger a deafen",
+			"default": "Ctrl+Shift+D"
+		},
+		"pause_toggle": {
+			"type": "bool",
+			"name": "Undeafen on Pause",
+			"description": "Controls if AutoDeafen+ should undeafen you when the game is paused",
+			"default": true
+		},
+		"startpos": {
+			"type": "bool",
+			"name": "Enable from StartPos",
+			"description": "Controls if AutoDeafen+ should enable if you are playing from a StartPos",
+			"default": false
+		},
+		"practise": {
+			"type": "bool",
+			"name": "Enable in Practise Mode",
+			"description": "Controls if AutoDeafen+ should enable if you are playing in Practise Mode",
+			"default": false
+		}
+	}
+}
