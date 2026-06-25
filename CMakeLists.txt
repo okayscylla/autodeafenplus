@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.3.4)
+cmake_minimum_required(VERSION 4.0.0)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -16,10 +16,11 @@ else()
     message(STATUS "Found Geode: $ENV{GEODE_SDK}")
 endif()
 
-find_package(cppzmq)
+add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
+
+CPMAddPackage("gh:zeromq/libzmq#master")
+CPMAddPackage("gh:zeromq/cppzmq#master")
 
 target_link_libraries(autodeafenplus cppzmq-static)
-
-add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
 setup_geode_mod(${PROJECT_NAME})

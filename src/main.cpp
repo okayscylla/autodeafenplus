@@ -9,6 +9,11 @@
 
 # include <Geode/modify/PlayerObject.hpp>
 
+# include <Geode/modify/PauseLayer.hpp>
+
+
+# include <Geode/ui/BasedButtonSprite.hpp>
+
 
 # include <matjson.hpp>
 
@@ -151,7 +156,7 @@ $on_game(Loaded) {
             NULL, KEY_ALL_ACCESS, &environment_key
 
         );
-        
+
         unsigned long length = 128;
 
         char* pathext = new char[length];
@@ -362,6 +367,31 @@ class $modify(PlayerObject) {
         if (!settings.enable || !active) { return; }
 
         flag_must_undeafen = true;
+
+    }
+
+};
+
+
+class $modify(PauseLayer) {
+
+    void customSetup() {
+
+        PauseLayer::customSetup();
+
+        CCNode* menu = this->getChildByID("right-button-menu");
+
+        CCMenuItemSpriteExtra* settings_button = CCMenuItemSpriteExtra::create(
+
+            CCSprite::createWithSpriteFrameName("diffIcon_02_btn_001.png"), 
+
+            this, 
+
+            nullptr
+        
+        );
+
+        menu->addChild(settings_button);
 
     }
 
