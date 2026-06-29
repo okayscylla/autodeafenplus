@@ -25,7 +25,7 @@ In order to get **AutoDeafen+** running properly in Linux, you will need a few t
 
 After fufilling these requirements (configuring global hotkeys to passthrough Discord on Wayland), **AutoDeafen+** *should* work.
 
-Alternatively, a single file binary bundled with a Python runtime and the required packages can also be used (can be enabled in mod settings), however this will cause a slight increase in memory usage (about a ~2mb increase on my computer). This however removes the need for evdev and pyzmq to be installed as dependencies.
+Alternatively, a single file binary bundled with a Python runtime and the required packages can also be used (can be enabled in mod settings). However, this will cause a slight increase in memory usage (about a ~2mb increase on my computer). This removes the need for evdev and pyzmq to be installed as dependencies.
 
 ## Acknowledgements
 

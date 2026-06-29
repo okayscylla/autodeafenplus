@@ -12,7 +12,12 @@
 # include <Geode/modify/PauseLayer.hpp>
 
 
+# include <Geode/binding/CCMenuItemSpriteExtra.hpp>
+
+
 # include <Geode/ui/BasedButtonSprite.hpp>
+
+# include <Geode/ui/Popup.hpp>
 
 
 # include <matjson.hpp>
@@ -90,7 +95,7 @@ struct matjson::Serialize<LevelConfig> {
     static matjson::Value toJson(LevelConfig const& value) {
 
         Value obj = matjson::Value();
-        
+
         obj["_e"] = value.enable;
 
         obj["_d"] = value.deafen_percentage;
@@ -373,7 +378,7 @@ class $modify(PlayerObject) {
 };
 
 
-class $modify(PauseLayer) {
+class $modify(ADPPauseLayer, PauseLayer) {
 
     void customSetup() {
 
@@ -387,11 +392,58 @@ class $modify(PauseLayer) {
 
             this, 
 
-            nullptr
-        
+            menu_selector(ADPPauseLayer::onADPSettingsToggle)
+
         );
 
         menu->addChild(settings_button);
+
+        menu->updateLayout();
+
+    }
+
+    void onADPSettingsToggle(CCObject* sendor) {
+
+        geode::log::info("677676767676776767676");
+
+    }
+
+};
+
+
+class ADPSettingsLayer : public geode::Popup {
+
+    protected:
+
+    bool init() {
+
+        if (!Popup::init(240.f, 160.f)) {
+
+            return false;
+
+        }
+
+        return true;
+
+    }
+
+    public:
+
+    static ADPSettingsLayer* create() {
+
+        ADPSettingsLayer* pp = new ADPSettingsLayer();
+
+        if (pp->init()) {
+
+            pp->autorelease();
+
+            return pp;
+
+        }
+
+        delete pp;
+
+        return nullptr;
 
     }
 
