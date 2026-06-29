@@ -42,20 +42,49 @@ using namespace geode::prelude;
 
 struct Settings {
 
-    bool enable = Mod::get()->getSettingValue<bool>("enable");
+    bool enable;
 
-    bool undeafen = Mod::get()->getSettingValue<bool>("undeafen");
+    bool undeafen;
 
-    bool pause_toggle = Mod::get()->getSettingValue<bool>("pause_toggle");
+    bool pause_toggle;
 
-    bool startpos = Mod::get()->getSettingValue<bool>("startpos");
+    bool startpos;
 
-    bool practise = Mod::get()->getSettingValue<bool>("practise");
+    bool practise;
 
+    int deafen_percentage;
 
-    int deafen_percentage = Mod::get()->getSettingValue<int>("deafen_percentage");
+    int undeafen_percentage;
 
-    int undeafen_percentage = Mod::get()->getSettingValue<int>("undeafen_percentage");
+    Settings (
+
+        bool _e, bool _u, bool _pt, bool _s, bool _ps, int _d, int _up
+
+    ) :
+
+        enable(_e), undeafen(_u), pause_toggle(_pt), startpos(_s), practise(_ps),
+
+        deafen_percentage(_d), undeafen_percentage(_up)
+
+    {}
+
+    Settings () :
+
+        enable(Mod::get()->getSettingValue<bool>("enable")),
+
+        undeafen(Mod::get()->getSettingValue<bool>("undeafen")),
+
+        pause_toggle(Mod::get()->getSettingValue<bool>("pause_toggle")),
+
+        startpos(Mod::get()->getSettingValue<bool>("startpos")),
+
+        practise(Mod::get()->getSettingValue<bool>("practise")),
+
+        deafen_percentage(Mod::get()->getSettingValue<int>("deafen_percentage")),
+
+        undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage")) 
+
+    {}
 
 };
 
@@ -103,6 +132,45 @@ struct matjson::Serialize<LevelConfig> {
         obj["_u"] = value.undeafen_percentage;
 
         return obj;
+
+    }
+
+};
+
+
+class ADPSettingsLayer : public geode::Popup {
+
+    protected:
+
+    bool init() {
+
+        if (!Popup::init(360.f, 240.f)) {
+
+            return false;
+
+        }
+
+        return true;
+
+    }
+
+    public:
+
+    static ADPSettingsLayer* create() {
+
+        ADPSettingsLayer* pp = new ADPSettingsLayer();
+
+        if (pp->init()) {
+
+            pp->autorelease();
+
+            return pp;
+
+        }
+
+        delete pp;
+
+        return nullptr;
 
     }
 
@@ -404,46 +472,11 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
     void onADPSettingsToggle(CCObject* sendor) {
 
-        geode::log::info("677676767676776767676");
+        geode::log::info("Opening ADP Settings Menu");
 
-    }
+        ADPSettingsLayer* settings = ADPSettingsLayer::create();
 
-};
-
-
-class ADPSettingsLayer : public geode::Popup {
-
-    protected:
-
-    bool init() {
-
-        if (!Popup::init(240.f, 160.f)) {
-
-            return false;
-
-        }
-
-        return true;
-
-    }
-
-    public:
-
-    static ADPSettingsLayer* create() {
-
-        ADPSettingsLayer* pp = new ADPSettingsLayer();
-
-        if (pp->init()) {
-
-            pp->autorelease();
-
-            return pp;
-
-        }
-
-        delete pp;
-
-        return nullptr;
+        settings->show();
 
     }
 
