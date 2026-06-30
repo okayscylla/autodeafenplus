@@ -7,8 +7,6 @@
 
 # include <Geode/modify/PlayLayer.hpp>
 
-# include <Geode/modify/PlayerObject.hpp>
-
 # include <Geode/modify/PauseLayer.hpp>
 
 
@@ -16,6 +14,10 @@
 
 
 # include <Geode/ui/BasedButtonSprite.hpp>
+
+# include <Geode/ui/TextInput.hpp>
+
+# include <Geode/ui/SliderNode.hpp>
 
 # include <Geode/ui/Popup.hpp>
 
@@ -159,6 +161,34 @@ class ADPSettingsLayer : public geode::Popup {
 
         this->setTitle("AutoDeafen+ Settings");
 
+        CCMenu* col1 = CCMenu::create();
+
+        col1->setLayout(ColumnLayout::create());
+
+        CCLabelBMFont* enable_text = CCLabelBMFont::create("Enable for level:", "bigFont.fnt");
+
+        col1->addChild(enable_text);
+
+        CCLabelBMFont* deafen_text = CCLabelBMFont::create("Deafen percentage:", "bigFont.fnt");
+
+        col1->addChild(deafen_text);
+
+        CCLabelBMFont* undeafen_text = CCLabelBMFont::create("Deafen percentage:", "bigFont.fnt");
+
+        undeafen_text->setScale(0.5f);
+
+        col1->addChild(undeafen_text);
+
+        col1->updateLayout();
+
+        enable_text->setScale(0.5f);
+
+        deafen_text->setScale(0.5f);
+
+        undeafen_text->setScale(0.5f);
+
+        m_mainLayer->addChildAtPosition(col1, Anchor::Left);
+
         return true;
 
     }
@@ -197,15 +227,61 @@ bool active = false;
 
 $on_mod(Loaded) {
 
-    listenForSettingChanges<bool>("enable", [](bool value) { settings.enable = value; });
+    listenForSettingChanges<bool>(
 
-    listenForSettingChanges<bool>("undeafen", [](bool value) { settings.undeafen = value; });
+        "enable",
 
-    listenForSettingChanges<bool>("pause_toggle", [](int value) { settings.pause_toggle = value; });
+        [](bool value) { settings.enable = value; }
 
-    listenForSettingChanges<int>("deafen_percentage", [](int value) { settings.deafen_percentage = value; });
+    );
 
-    listenForSettingChanges<int>("undeafen_percentage", [](int value) { settings.undeafen_percentage = value; });
+    listenForSettingChanges<bool>(
+
+        "undeafen",
+
+        [](bool value) { settings.undeafen = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "pause_toggle",
+
+        [](int value) { settings.pause_toggle = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "startpos",
+
+        [](int value) { settings.startpos = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "practise",
+
+        [](int value) { settings.practise = value; }
+
+    );
+
+    listenForSettingChanges<int>(
+
+        "deafen_percentage",
+
+        [](int value) { settings.deafen_percentage = value; }
+
+    );
+
+    listenForSettingChanges<int>(
+
+        "undeafen_percentage",
+
+        [](int value) { settings.undeafen_percentage = value; }
+
+    );
 
 }
 
@@ -328,7 +404,27 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         if (settings.undeafen_percentage <= settings.deafen_percentage) { return; }
 
-        if (this->m_playerDied) {
+        if (m_isPracticeMode) {
+
+            if (!settings.practise) {
+
+                return;
+
+            }
+
+        }
+
+        if (m_isTestMode) {
+
+            if (!settings.startpos) {
+
+                return;
+
+            }
+
+        }
+
+        if (m_playerDied) {
 
             if (active) {
 
