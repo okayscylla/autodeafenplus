@@ -97,10 +97,17 @@ struct LevelConfig {
 
     int undeafen_percentage;
 
+    LevelConfig() :
 
-    LevelConfig() : enable(false), deafen_percentage(40), undeafen_percentage(95) {}
+        enable(false),
 
-    LevelConfig(bool e, int d, int u) : enable(e), deafen_percentage(d), undeafen_percentage(u) {}
+        deafen_percentage(Mod::get()->getSettingValue<int>("deafen_percentage")),
+
+        undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage"))
+
+    {}
+
+    LevelConfig(bool _e, int _d, int _u) : enable(_e), deafen_percentage(_d), undeafen_percentage(_u) {}
 
 };
 
@@ -142,7 +149,7 @@ class ADPSettingsLayer : public geode::Popup {
 
     protected:
 
-    bool init() {
+    bool init(LevelConfig* config) {
 
         if (!Popup::init(360.f, 240.f)) {
 
@@ -150,17 +157,19 @@ class ADPSettingsLayer : public geode::Popup {
 
         }
 
+        this->setTitle("AutoDeafen+ Settings");
+
         return true;
 
     }
 
     public:
 
-    static ADPSettingsLayer* create() {
+    static ADPSettingsLayer* create(LevelConfig* config) {
 
         ADPSettingsLayer* pp = new ADPSettingsLayer();
 
-        if (pp->init()) {
+        if (pp->init(config)) {
 
             pp->autorelease();
 
@@ -184,13 +193,6 @@ Settings settings;
 
 
 bool active = false;
-
-bool flag_must_undeafen = false;
-
-bool flag_ignore_update = false;
-
-
-int current_level_id;
 
 
 $on_mod(Loaded) {
@@ -294,7 +296,13 @@ const void press_keys(const std::string key_combo) {
 }
 
 
-class $modify(PlayLayer) {
+class $modify(ADPPlayLayer, PlayLayer) {
+
+    struct Fields {
+
+        bool m_flagIgnoreUpdates = false;
+
+    };
 
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
 
@@ -308,8 +316,6 @@ class $modify(PlayLayer) {
 
         }
 
-        flag_must_undeafen = false;
-
         return true;
 
     }
@@ -320,45 +326,47 @@ class $modify(PlayLayer) {
 
         if (!settings.enable) { return; }
 
-        if (flag_ignore_update) { return; }
+        if (settings.undeafen_percentage <= settings.deafen_percentage) { return; }
 
-        if (flag_must_undeafen) {
+        if (this->m_playerDied) {
 
             if (active) {
 
                 active = false;
 
-                geode::log::info("Disabled auto deafen");
+                geode::log::info("Disabled auto deafen (player died)");
 
             }
-
-            flag_must_undeafen = false;
 
             return;
 
         }
 
+        if (m_fields->m_flagIgnoreUpdates) { return; }
+
         int current_percentage = PlayLayer::getCurrentPercentInt();
 
-        if (active && ((current_percentage < settings.deafen_percentage) || (current_percentage < settings.undeafen_percentage))) {
+        if (active && (current_percentage < settings.deafen_percentage)) {
 
             active = false;
 
-            geode::log::info("Disabled auto deafen");
+            geode::log::info("Disabled auto deafen (before deafen percent)");
+
+            return;
 
         }
 
         if (active && !settings.undeafen) { return; }
 
-        if (settings.undeafen && !active && (current_percentage > settings.deafen_percentage)) { return; }
+        if (!active && settings.undeafen && (current_percentage >= settings.undeafen_percentage)) { return; }
 
-        if (current_percentage > settings.deafen_percentage) {
+        if (current_percentage >= settings.deafen_percentage) {
 
-            if (settings.undeafen && (current_percentage > settings.undeafen_percentage) && (settings.undeafen_percentage > settings.deafen_percentage)) {
+            if (settings.undeafen && (current_percentage >= settings.undeafen_percentage)) {
 
                 active = false;
 
-                geode::log::info("Disabled auto deafen");
+                geode::log::info("Disabled auto deafen (passed undeafen percent)");
 
                 return;
 
@@ -366,9 +374,7 @@ class $modify(PlayLayer) {
 
             active = true;
 
-            geode::log::info("Enabled auto deafen");
-
-            return;
+            geode::log::info("Enabled auto deafen (passed deafen percent)");
 
         }
 
@@ -382,7 +388,7 @@ class $modify(PlayLayer) {
 
             active = false;
 
-            geode::log::info("Disabled auto deafen");
+            geode::log::info("Disabled auto deafen (paused)");
 
         }
 
@@ -398,17 +404,19 @@ class $modify(PlayLayer) {
 
         if (current_percentage > settings.deafen_percentage) {
 
-            if (settings.undeafen && (current_percentage > settings.undeafen_percentage) && (settings.undeafen_percentage > settings.deafen_percentage)) {
+            if (settings.undeafen && (current_percentage > settings.undeafen_percentage)) {
 
                 active = false;
 
-                geode::log::info("Disabled auto deafen");
+                geode::log::info("Disabled auto deafen (past undeafen percentage)");
+
+                return;
 
             }
 
             active = true;
 
-            geode::log::info("Enabled auto deafen");
+            geode::log::info("Enabled auto deafen (unpaused)");
 
         }
 
@@ -422,24 +430,9 @@ class $modify(PlayLayer) {
 
         active = false;
 
-        geode::log::info("Disabled auto deafen");
+        geode::log::info("Disabled auto deafen (end animation)");
 
-        flag_ignore_update = true;
-
-    }
-
-};
-
-
-class $modify(PlayerObject) {
-
-    void playerDestroyed(bool noEffects) {
-
-        PlayerObject::playerDestroyed(noEffects);
-
-        if (!settings.enable || !active) { return; }
-
-        flag_must_undeafen = true;
+        m_fields->m_flagIgnoreUpdates = true;
 
     }
 
@@ -472,9 +465,9 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
     void onADPSettingsToggle(CCObject* sendor) {
 
-        geode::log::info("Opening ADP Settings Menu");
+        geode::log::info("Opening settings menu");
 
-        ADPSettingsLayer* settings = ADPSettingsLayer::create();
+        ADPSettingsLayer* settings = ADPSettingsLayer::create(nullptr);
 
         settings->show();
 

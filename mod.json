@@ -60,6 +60,38 @@
 			"name": "Enable in Practise Mode",
 			"description": "Controls if AutoDeafen+ should enable if you are playing in Practise Mode",
 			"default": false
+		},
+		"defaults": {
+			"type": "title",
+			"name": "Defaults"
+		},
+		"deafen_percentage": {
+			"type": "int",
+			"name": "Default Deafen Percentage",
+			"description": "Default percentage for a level to deafen you in Discord at (if enabled)",
+			"default": 40,
+			"min": 0,
+			"max": 100,
+			"control": {
+				"slider": true,
+				"arrows": true,
+				"arrow-step": 1,
+				"input": true
+			}
+		},
+		"undeafen_percentage": {
+			"type": "int",
+			"name": "Default Undeafen Percentage",
+			"description": "Default percentage for a level to undeafen you in Discord at (if enabled)",
+			"default": 95,
+			"min": 0,
+			"max": 100,
+			"control": {
+				"slider": true,
+				"arrows": true,
+				"arrow-step": 1,
+				"input": true
+			}
 		}
 	}
 }
