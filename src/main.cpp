@@ -159,35 +159,83 @@ class ADPSettingsLayer : public geode::Popup {
 
         }
 
+        // basic layout setup
+
         this->setTitle("AutoDeafen+ Settings");
 
         CCMenu* col1 = CCMenu::create();
 
+        col1->setContentSize(CCSize(360.f,240.f));
+
         col1->setLayout(ColumnLayout::create());
+
+        // row 1
+
+        CCMenu* row1 = CCMenu::create();
+
+        row1->setContentSize(CCSize(360.f,40.f));
+
+        row1->setLayout(AnchorLayout::create());
 
         CCLabelBMFont* enable_text = CCLabelBMFont::create("Enable for level:", "bigFont.fnt");
 
-        col1->addChild(enable_text);
+        enable_text->setAnchorPoint(ccp(0.f,0.5f));
+
+        enable_text->setScale(0.6f);
+
+        row1->addChildAtPosition(enable_text, Anchor::Left, ccp(10, 0));
+
+        row1->updateLayout();
+
+        // row 2
+
+        CCMenu* row2 = CCMenu::create();
+
+        row2->setContentSize(CCSize(360.f,40.f));
+
+        row2->setLayout(AnchorLayout::create());
 
         CCLabelBMFont* deafen_text = CCLabelBMFont::create("Deafen percentage:", "bigFont.fnt");
 
-        col1->addChild(deafen_text);
+        deafen_text->setAnchorPoint(ccp(0.f,0.5f));
 
-        CCLabelBMFont* undeafen_text = CCLabelBMFont::create("Deafen percentage:", "bigFont.fnt");
+        deafen_text->setScale(0.6f);
 
-        undeafen_text->setScale(0.5f);
+        row2->addChildAtPosition(deafen_text, Anchor::Left, ccp(10, 0));
 
-        col1->addChild(undeafen_text);
+        row2->updateLayout();
+
+        // row 3
+
+        CCMenu* row3 = CCMenu::create();
+
+        row3->setContentSize(CCSize(360.f, 40.f));
+
+        row3->setLayout(AnchorLayout::create());
+
+        CCLabelBMFont* undeafen_text = CCLabelBMFont::create("Undeafen percentage:", "bigFont.fnt");
+
+        undeafen_text->setAnchorPoint(ccp(0.f,0.5f));
+
+        undeafen_text->setScale(0.6f);
+
+        row3->addChildAtPosition(undeafen_text, Anchor::Left, ccp(10, 0));
+
+        row3->updateLayout();
+
+        // putting it together
+
+        col1->addChild(row3);
+
+        col1->addChild(row2);
+
+        col1->addChild(row1);
 
         col1->updateLayout();
 
-        enable_text->setScale(0.5f);
+        col1->setPosition(180.f, 120.f);
 
-        deafen_text->setScale(0.5f);
-
-        undeafen_text->setScale(0.5f);
-
-        m_mainLayer->addChildAtPosition(col1, Anchor::Left);
+        m_mainLayer->addChild(col1);
 
         return true;
 
