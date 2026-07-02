@@ -150,11 +150,23 @@ struct matjson::Serialize<LevelConfig> {
 };
 
 
+Settings settings;
+
+LevelConfig current_level;
+
+int level_id;
+
+
+int user_platform;
+
+bool active = false;
+
+
 class ADPSettingsLayer : public geode::Popup {
 
     protected:
 
-    bool init(LevelConfig* config) {
+    bool init() override {
 
         if (!Popup::init(360.f, 240.f)) {
 
@@ -200,7 +212,7 @@ class ADPSettingsLayer : public geode::Popup {
 
         );
 
-        enable_box->toggle(config->enable);
+        enable_box->toggle(current_level.enable);
 
         enable_box->setAnchorPoint(ccp(1.f,0.5f));
 
@@ -230,7 +242,7 @@ class ADPSettingsLayer : public geode::Popup {
 
             40.f,
 
-            std::to_string(config->deafen_percentage)
+            std::to_string(current_level.deafen_percentage)
 
         );
 
@@ -266,7 +278,7 @@ class ADPSettingsLayer : public geode::Popup {
 
             40.f,
 
-            std::to_string(config->undeafen_percentage)
+            std::to_string(current_level.undeafen_percentage)
 
         );
 
@@ -320,13 +332,23 @@ class ADPSettingsLayer : public geode::Popup {
 
     }
 
+    void onClose(CCObject* obj) override {
+
+        geode::log::info("closed!");
+
+        Mod::get()->setSavedValue<LevelConfig>(std::to_string(level_id), current_level);
+
+        Popup::onClose(obj);
+
+    }
+
     public:
 
-    static ADPSettingsLayer* create(LevelConfig* config) {
+    static ADPSettingsLayer* create() {
 
         ADPSettingsLayer* pp = new ADPSettingsLayer();
 
-        if (pp->init(config)) {
+        if (pp->init()) {
 
             pp->autorelease();
 
@@ -341,16 +363,6 @@ class ADPSettingsLayer : public geode::Popup {
     }
 
 };
-
-
-Settings settings;
-
-LevelConfig current_level;
-
-
-int user_platform;
-
-bool active = false;
 
 
 $on_mod(Loaded) {
@@ -518,11 +530,13 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         }
 
-        geode::log::info("Loading config for level {}", m_level->m_levelID);
+        level_id = m_level->m_levelID;
+
+        geode::log::info("Loading config for level {}", level_id);
 
         current_level = Mod::get()->getSavedValue<LevelConfig>(
 
-            std::to_string(m_level->m_levelID), 
+            std::to_string(level_id), 
 
             LevelConfig()
 
@@ -699,10 +713,7 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
         geode::log::info("Opening settings menu");
 
-
-        LevelConfig config = LevelConfig();
-
-        ADPSettingsLayer* settings = ADPSettingsLayer::create(&config);
+        ADPSettingsLayer* settings = ADPSettingsLayer::create();
 
         settings->show();
 
