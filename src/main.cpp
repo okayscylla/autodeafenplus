@@ -229,8 +229,6 @@ $on_game(Loaded) {
 
         geode::log::info("Detected Linux (wine) environment");
 
-        // geode::log::info("Using cmpzmq version {}", zmq::version());
-
         user_platform = 1;
 
         HKEY environment_key;
@@ -273,9 +271,20 @@ $on_game(Loaded) {
 
         }
 
-        geode::log::info("Found PATHEXT: {}", pathext);
+        std::string _str = (std::string)pathext;
 
         delete[] pathext;
+
+        geode::log::info("Found PATHEXT: {}", _str);
+
+        if (_str.contains(";.;") || _str.ends_with(";.")) {
+
+            geode::log::info("PATHEXT already configured");
+
+        } else {
+
+            geode::log::info("PATHEXT not configured, updating");
+        }
 
         RegCloseKey(environment_key);
 
