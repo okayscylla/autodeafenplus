@@ -7,7 +7,7 @@ ADDRESS = "tcp://localhost:6767"
 print("Initialising input bridge")
 
 context = zmq.Context()
-socket = context.socket(zmq.REP)
+socket = context.socket(zmq.PULL)
 socket.bind("tcp://localhost:6767")
 
 input_handle = evdev.UInput()
@@ -19,7 +19,6 @@ while True:
         message: dict = json.loads(socket.recv())
     except json.JSONDecodeError:
         print("Recieved invalid packet")
-        socket.send(b"-1") # invalid request
         continue
     except Exception as e:
         print(f"A fatal error occured: {e}")
@@ -38,22 +37,17 @@ while True:
                 for key in message["keys"]:
                     input_handle.write(evdev.ecodes.EV_KEY, int(key), 0)
                 
-                socket.send(b"1") # recieved, success
                 print("Request succeeded!")
             else:
-                socket.send(b"0") # recieved, failed
                 print("Request failed!")
         elif message["type"] == "shutdown":
             print("Recieved shutdown request!")
-            socket.send(b"1") # recieved, success
             
             break
         else:
             print(f"Recieved invalid request: {message["type"]}")
-            socket.send(b"-1") # invalid request
     except ValueError:
         print("Recieved invalid packet")
-        socket.send(b"-1")
         continue
     except Exception as e:
         print(f"A fatal error occured: {e}")
