@@ -162,6 +162,151 @@ int user_platform;
 bool active = false;
 
 
+$on_mod(Loaded) {
+
+    listenForSettingChanges<bool>(
+
+        "enable",
+
+        [](bool value) { settings.enable = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "undeafen",
+
+        [](bool value) { settings.undeafen = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "pause_toggle",
+
+        [](int value) { settings.pause_toggle = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "startpos",
+
+        [](int value) { settings.startpos = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "practise",
+
+        [](int value) { settings.practise = value; }
+
+    );
+
+    listenForSettingChanges<int>(
+
+        "deafen_percentage",
+
+        [](int value) { settings.deafen_percentage = value; }
+
+    );
+
+    listenForSettingChanges<int>(
+
+        "undeafen_percentage",
+
+        [](int value) { current_level.undeafen_percentage = value; }
+
+    );
+
+}
+
+
+$on_game(Loaded) {
+
+    if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
+
+        geode::log::info("Detected Linux (wine) environment");
+
+        // geode::log::info("Using cmpzmq version {}", zmq::version());
+
+        user_platform = 1;
+
+        HKEY environment_key;
+
+        RegOpenKeyExA(
+
+            HKEY_LOCAL_MACHINE,
+
+            "System\\CurrentControlSet\\Control\\Session Manager\\Environment",
+
+            NULL, KEY_ALL_ACCESS, &environment_key
+
+        );
+
+        unsigned long length = 128;
+
+        char* pathext = new char[length];
+
+        LSTATUS result = RegGetValueA(
+
+            environment_key, NULL, "PATHEXT", 
+
+            RRF_RT_REG_SZ, NULL, pathext, &length
+
+        );
+
+        if (result == ERROR_MORE_DATA) {
+
+            delete[] pathext;
+
+            pathext = new char[length];
+
+            RegGetValueA(
+
+                environment_key, NULL, "PATHEXT", 
+
+                RRF_RT_REG_SZ, NULL, pathext, &length
+
+            );
+
+        }
+
+        geode::log::info("Found PATHEXT: {}", pathext);
+
+        delete[] pathext;
+
+        RegCloseKey(environment_key);
+
+    } else {
+
+        geode::log::info("Detected Windows environment");
+
+        user_platform = 0;
+
+    }
+
+}
+
+
+const void press_keys(const std::string key_combo) {
+
+    switch (user_platform) {
+
+        case 0:
+
+        case 1:
+
+        default:
+
+            geode::log::error("Invalid platform: {}", user_platform);
+
+    }
+
+}
+
+
 class ADPSettingsLayer : public geode::Popup {
 
     protected:
@@ -363,151 +508,6 @@ class ADPSettingsLayer : public geode::Popup {
     }
 
 };
-
-
-$on_mod(Loaded) {
-
-    listenForSettingChanges<bool>(
-
-        "enable",
-
-        [](bool value) { settings.enable = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "undeafen",
-
-        [](bool value) { settings.undeafen = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "pause_toggle",
-
-        [](int value) { settings.pause_toggle = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "startpos",
-
-        [](int value) { settings.startpos = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "practise",
-
-        [](int value) { settings.practise = value; }
-
-    );
-
-    listenForSettingChanges<int>(
-
-        "deafen_percentage",
-
-        [](int value) { settings.deafen_percentage = value; }
-
-    );
-
-    listenForSettingChanges<int>(
-
-        "undeafen_percentage",
-
-        [](int value) { current_level.undeafen_percentage = value; }
-
-    );
-
-}
-
-
-$on_game(Loaded) {
-
-    if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
-
-        geode::log::info("Detected Linux (wine) environment");
-
-        // geode::log::info("Using cmpzmq version {}", zmq::version());
-
-        user_platform = 1;
-
-        HKEY environment_key;
-
-        RegOpenKeyExA(
-
-            HKEY_LOCAL_MACHINE,
-
-            "System\\CurrentControlSet\\Control\\Session Manager\\Environment",
-
-            NULL, KEY_ALL_ACCESS, &environment_key
-
-        );
-
-        unsigned long length = 128;
-
-        char* pathext = new char[length];
-
-        LSTATUS result = RegGetValueA(
-
-            environment_key, NULL, "PATHEXT", 
-
-            RRF_RT_REG_SZ, NULL, pathext, &length
-
-        );
-
-        if (result == ERROR_MORE_DATA) {
-
-            delete[] pathext;
-
-            pathext = new char[length];
-
-            RegGetValueA(
-
-                environment_key, NULL, "PATHEXT", 
-
-                RRF_RT_REG_SZ, NULL, pathext, &length
-
-            );
-
-        }
-
-        geode::log::info("Found PATHEXT: {}", pathext);
-
-        delete[] pathext;
-
-        RegCloseKey(environment_key);
-
-    } else {
-
-        geode::log::info("Detected Windows environment");
-
-        user_platform = 0;
-
-    }
-
-}
-
-
-const void press_keys(const std::string key_combo) {
-
-    switch (user_platform) {
-
-        case 0:
-
-        case 1:
-
-        default:
-
-            geode::log::error("Invalid platform: {}", user_platform);
-
-    }
-
-}
 
 
 class $modify(ADPPlayLayer, PlayLayer) {
