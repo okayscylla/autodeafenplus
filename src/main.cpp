@@ -12,12 +12,12 @@
 
 # include <Geode/binding/CCMenuItemSpriteExtra.hpp>
 
+# include <Geode/binding/CCMenuItemToggler.hpp>
+
 
 # include <Geode/ui/BasedButtonSprite.hpp>
 
 # include <Geode/ui/TextInput.hpp>
-
-# include <Geode/ui/SliderNode.hpp>
 
 # include <Geode/ui/Popup.hpp>
 
@@ -35,6 +35,9 @@
 
 
 # include <cstddef>
+
+# include <string>
+
 
 # include <zmq.hpp>
 
@@ -183,7 +186,27 @@ class ADPSettingsLayer : public geode::Popup {
 
         enable_text->setScale(0.6f);
 
-        row1->addChildAtPosition(enable_text, Anchor::Left, ccp(10, 0));
+        row1->addChildAtPosition(enable_text, Anchor::Left, ccp(10,0));
+
+        CCMenuItemToggler* enable_box = CCMenuItemToggler::create(
+
+            CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png"),
+
+            CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png"),
+
+            this,
+
+            nullptr
+
+        );
+
+        enable_box->toggle(config->enable);
+
+        enable_box->setAnchorPoint(ccp(1.f,0.5f));
+
+        enable_box->setScale(0.8f);
+
+        row1->addChildAtPosition(enable_box, Anchor::Right, ccp(-10.f,0.f));
 
         row1->updateLayout();
 
@@ -201,7 +224,25 @@ class ADPSettingsLayer : public geode::Popup {
 
         deafen_text->setScale(0.6f);
 
-        row2->addChildAtPosition(deafen_text, Anchor::Left, ccp(10, 0));
+        row2->addChildAtPosition(deafen_text, Anchor::Left, ccp(10.f,0.f));
+
+        TextInput* deafen_input = TextInput::create(
+
+            40.f,
+
+            std::to_string(config->deafen_percentage)
+
+        );
+
+        deafen_input->setCommonFilter(CommonFilter::Int);
+
+        deafen_input->setMaxCharCount(2);
+
+        deafen_input->setAnchorPoint(ccp(1.f,0.5f));
+
+        deafen_input->setScale(0.9f);
+
+        row2->addChildAtPosition(deafen_input, Anchor::Right, ccp(-10.f,0.f));
 
         row2->updateLayout();
 
@@ -219,7 +260,25 @@ class ADPSettingsLayer : public geode::Popup {
 
         undeafen_text->setScale(0.6f);
 
-        row3->addChildAtPosition(undeafen_text, Anchor::Left, ccp(10, 0));
+        row3->addChildAtPosition(undeafen_text, Anchor::Left, ccp(10.f,0.f));
+
+        TextInput* undeafen_input = TextInput::create(
+
+            40.f,
+
+            std::to_string(config->undeafen_percentage)
+
+        );
+
+        undeafen_input->setCommonFilter(CommonFilter::Int);
+
+        undeafen_input->setMaxCharCount(2);
+
+        undeafen_input->setAnchorPoint(ccp(1.f,0.5f));
+
+        undeafen_input->setScale(0.9f);
+
+        row3->addChildAtPosition(undeafen_input, Anchor::Right, ccp(-10.f,0.f));
 
         row3->updateLayout();
 
@@ -236,6 +295,26 @@ class ADPSettingsLayer : public geode::Popup {
         col1->setPosition(180.f, 120.f);
 
         m_mainLayer->addChild(col1);
+
+        // add version text
+
+        CCLabelBMFont* version_text = CCLabelBMFont::create(
+
+            Mod::get()->getVersion().toNonVString().c_str(),
+
+            "bigFont.fnt"
+
+        );
+
+        version_text->setAnchorPoint(ccp(1.f,0.f));
+
+        version_text->setScale(0.7f);
+
+        version_text->setOpacity(100);
+
+        version_text->setPosition(ccp(353,9));
+
+        m_mainLayer->addChild(version_text);
 
         return true;
 
@@ -611,7 +690,10 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
         geode::log::info("Opening settings menu");
 
-        ADPSettingsLayer* settings = ADPSettingsLayer::create(nullptr);
+
+        LevelConfig config = LevelConfig();
+
+        ADPSettingsLayer* settings = ADPSettingsLayer::create(&config);
 
         settings->show();
 
