@@ -343,11 +343,12 @@ class ADPSettingsLayer : public geode::Popup {
 };
 
 
-int user_platform;
-
-
 Settings settings;
 
+LevelConfig current_level;
+
+
+int user_platform;
 
 bool active = false;
 
@@ -406,7 +407,7 @@ $on_mod(Loaded) {
 
         "undeafen_percentage",
 
-        [](int value) { settings.undeafen_percentage = value; }
+        [](int value) { current_level.undeafen_percentage = value; }
 
     );
 
@@ -484,11 +485,9 @@ const void press_keys(const std::string key_combo) {
 
     switch (user_platform) {
 
-        case 1:
-
-            // std::system("cmd /c start /unix $(which ydotool)");
-
         case 0:
+
+        case 1:
 
         default:
 
@@ -519,6 +518,16 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         }
 
+        geode::log::info("Loading config for level {}", m_level->m_levelID);
+
+        current_level = Mod::get()->getSavedValue<LevelConfig>(
+
+            std::to_string(m_level->m_levelID), 
+
+            LevelConfig()
+
+        );
+
         return true;
 
     }
@@ -527,9 +536,9 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         PlayLayer::postUpdate(dt);
 
-        if (!settings.enable) { return; }
+        if (!settings.enable || !current_level.enable) { return; }
 
-        if (settings.undeafen_percentage <= settings.deafen_percentage) { return; }
+        if (current_level.undeafen_percentage <= current_level.deafen_percentage) { return; }
 
         if (m_isPracticeMode) {
 
@@ -569,7 +578,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         int current_percentage = PlayLayer::getCurrentPercentInt();
 
-        if (active && (current_percentage < settings.deafen_percentage)) {
+        if (active && (current_percentage < current_level.deafen_percentage)) {
 
             active = false;
 
@@ -581,11 +590,11 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         if (active && !settings.undeafen) { return; }
 
-        if (!active && settings.undeafen && (current_percentage >= settings.undeafen_percentage)) { return; }
+        if (!active && settings.undeafen && (current_percentage >= current_level.undeafen_percentage)) { return; }
 
-        if (current_percentage >= settings.deafen_percentage) {
+        if (current_percentage >= current_level.deafen_percentage) {
 
-            if (settings.undeafen && (current_percentage >= settings.undeafen_percentage)) {
+            if (settings.undeafen && (current_percentage >= current_level.undeafen_percentage)) {
 
                 active = false;
 
@@ -607,7 +616,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         PlayLayer::pauseGame(unfocused);
 
-        if (settings.enable && settings.pause_toggle && active) {
+        if (settings.enable && current_level.enable && settings.pause_toggle && active) {
 
             active = false;
 
@@ -621,13 +630,13 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         PlayLayer::resume();
 
-        if (!settings.enable || !settings.pause_toggle || active) { return; }
+        if (!settings.enable || !current_level.enable || !settings.pause_toggle || active) { return; }
 
         int current_percentage = PlayLayer::getCurrentPercentInt();
 
-        if (current_percentage > settings.deafen_percentage) {
+        if (current_percentage > current_level.deafen_percentage) {
 
-            if (settings.undeafen && (current_percentage > settings.undeafen_percentage)) {
+            if (settings.undeafen && (current_percentage > current_level.undeafen_percentage)) {
 
                 active = false;
 
@@ -649,7 +658,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         PlayLayer::playEndAnimationToPos(position);
 
-        if (!settings.enable || !active) { return; }
+        if (!settings.enable || !current_level.enable || !active) { return; }
 
         active = false;
 
