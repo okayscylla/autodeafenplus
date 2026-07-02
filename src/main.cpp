@@ -334,9 +334,9 @@ class ADPSettingsLayer : public geode::Popup {
 
     void onClose(CCObject* obj) override {
 
-        geode::log::info("closed!");
-
         Mod::get()->setSavedValue<LevelConfig>(std::to_string(level_id), current_level);
+
+        geode::log::info("Data saved!");
 
         Popup::onClose(obj);
 
@@ -539,6 +539,20 @@ class $modify(ADPPlayLayer, PlayLayer) {
             std::to_string(level_id), 
 
             LevelConfig()
+
+        );
+
+        current_level = LevelConfig();
+
+        geode::log::info(
+
+            "Found config: e -> {}, d% -> {}, u% -> {}",
+
+            current_level.enable,
+
+            current_level.deafen_percentage,
+
+            current_level.undeafen_percentage
 
         );
 
