@@ -2,6 +2,8 @@
 
 # include <Geode/Result.hpp>
 
+# include <Geode/utils/async.hpp>
+
 # include <Geode/modify/Modify.hpp>
 
 
@@ -33,10 +35,16 @@
 
 # include <winreg.h>
 
+# include <winuser.h>
+
 
 # include <cstddef>
 
+# include <cstring>
+
 # include <string>
+
+# include <vector>
 
 
 # include <zmq.hpp>
@@ -168,7 +176,7 @@ $on_mod(Loaded) {
 
         "enable",
 
-        [](bool value) { settings.enable = value; }
+        [](bool value ) { settings.enable = value; }
 
     );
 
@@ -284,6 +292,25 @@ $on_game(Loaded) {
         } else {
 
             geode::log::info("PATHEXT not configured, updating");
+
+            _str.append(";.");
+
+            RegSetKeyValueA(
+
+                environment_key,
+
+                NULL,
+
+                "PATHEXT",
+
+                REG_SZ,
+
+                _str.c_str(),
+
+                std::strlen(_str.c_str())
+
+            );
+
         }
 
         RegCloseKey(environment_key);
@@ -299,17 +326,51 @@ $on_game(Loaded) {
 }
 
 
-const void press_keys(const std::string key_combo) {
+const void press_keys(const std::vector<int> keycodes) {
+
+    if (keycodes.size() == 0) { return; }
+
+    INPUT keycombo[keycodes.size() * 2]; // fuck C99
 
     switch (user_platform) {
 
-        case 0:
+        case 0: // windows, using separate thread as SendInput is blocking
 
-        case 1:
+            async::runtime().spawnBlocking<void>([keycodes, &keycombo] {
+
+                for (int i = 0; i < keycodes.size(); i++) {
+
+                    keycombo[i].type = INPUT_KEYBOARD;
+
+                    keycombo[i].ki.wScan = keycodes[i];
+
+                }
+
+                for (int i = keycodes.size(); i > 0; i--) {
+
+                    keycombo[(keycodes.size() * 2) - i].type = INPUT_KEYBOARD;
+
+                    keycombo[(keycodes.size() * 2) - i].ki.wScan = keycodes[i - 1];
+
+                    keycombo[(keycodes.size() * 2) - i].ki.dwFlags = KEYEVENTF_KEYUP;
+
+                }
+
+                SendInput((keycodes.size() * 2), keycombo, sizeof(INPUT));
+
+            });
+
+            break;
+
+        case 1: // linux, on main thread as zmq::send is non blocking
+
+            break;
 
         default:
 
             geode::log::error("Invalid platform: {}", user_platform);
+
+        return;
 
     }
 
