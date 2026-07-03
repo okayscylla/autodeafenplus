@@ -176,7 +176,7 @@ $on_mod(Loaded) {
 
         "enable",
 
-        [](bool value ) { settings.enable = value; }
+        [](bool value) { settings.enable = value; }
 
     );
 
