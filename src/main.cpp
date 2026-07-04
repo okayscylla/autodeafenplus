@@ -4,6 +4,8 @@
 
 # include <Geode/utils/async.hpp>
 
+# include <Geode/utils/Keyboard.hpp>
+
 # include <Geode/modify/Modify.hpp>
 
 
@@ -49,6 +51,8 @@
 
 # include <zmq.hpp>
 
+# include "keycodes.h"
+
 
 using namespace geode::prelude;
 
@@ -69,15 +73,17 @@ struct Settings {
 
     int undeafen_percentage;
 
+    Keybind discord_keybind;
+
     Settings (
 
-        bool _e, bool _u, bool _pt, bool _s, bool _ps, int _d, int _up
+        bool _e, bool _u, bool _pt, bool _s, bool _ps, int _d, int _up, Keybind _k
 
     ) :
 
         enable(_e), undeafen(_u), pause_toggle(_pt), startpos(_s), practise(_ps),
 
-        deafen_percentage(_d), undeafen_percentage(_up)
+        deafen_percentage(_d), undeafen_percentage(_up), discord_keybind(_k)
 
     {}
 
@@ -95,7 +101,9 @@ struct Settings {
 
         deafen_percentage(Mod::get()->getSettingValue<int>("deafen_percentage")),
 
-        undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage")) 
+        undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage")),
+
+        discord_keybind(Mod::get()->getSettingValue<std::vector<geode::Keybind>>("discord_keybind")[0])
 
     {}
 
