@@ -141,9 +141,9 @@ struct matjson::Serialize<LevelConfig> {
 
         GEODE_UNWRAP_INTO(bool _e, value["_e"].asBool());
 
-        GEODE_UNWRAP_INTO(bool _d, value["_d"].asInt());
+        GEODE_UNWRAP_INTO(int _d, value["_d"].asInt());
 
-        GEODE_UNWRAP_INTO(bool _u, value["_u"].asInt());
+        GEODE_UNWRAP_INTO(int _u, value["_u"].asInt());
 
         return Ok(LevelConfig(_e, _d, _u));
 
@@ -407,6 +407,8 @@ class ADPSettingsLayer : public geode::Popup {
 
         col1->setLayout(ColumnLayout::create());
 
+        col1->setID("col1");
+
         // row 1
 
         CCMenu* row1 = CCMenu::create();
@@ -414,6 +416,8 @@ class ADPSettingsLayer : public geode::Popup {
         row1->setContentSize(CCSize(360.f,40.f));
 
         row1->setLayout(AnchorLayout::create());
+
+        row1->setID("row1");
 
         CCLabelBMFont* enable_text = CCLabelBMFont::create("Enable for level:", "bigFont.fnt");
 
@@ -431,7 +435,7 @@ class ADPSettingsLayer : public geode::Popup {
 
             this,
 
-            nullptr
+            menu_selector(ADPSettingsLayer::onADPLayerEnableToggle)
 
         );
 
@@ -440,6 +444,8 @@ class ADPSettingsLayer : public geode::Popup {
         enable_box->setAnchorPoint(ccp(1.f,0.5f));
 
         enable_box->setScale(0.8f);
+
+        enable_box->setID("enable-box");
 
         row1->addChildAtPosition(enable_box, Anchor::Right, ccp(-10.f,0.f));
 
@@ -452,6 +458,8 @@ class ADPSettingsLayer : public geode::Popup {
         row2->setContentSize(CCSize(360.f,40.f));
 
         row2->setLayout(AnchorLayout::create());
+
+        row2->setID("row2");
 
         CCLabelBMFont* deafen_text = CCLabelBMFont::create("Deafen percentage:", "bigFont.fnt");
 
@@ -477,6 +485,8 @@ class ADPSettingsLayer : public geode::Popup {
 
         deafen_input->setScale(0.9f);
 
+        deafen_input->setID("deafen-input");
+
         row2->addChildAtPosition(deafen_input, Anchor::Right, ccp(-10.f,0.f));
 
         row2->updateLayout();
@@ -488,6 +498,8 @@ class ADPSettingsLayer : public geode::Popup {
         row3->setContentSize(CCSize(360.f, 40.f));
 
         row3->setLayout(AnchorLayout::create());
+
+        row3->setID("row3");
 
         CCLabelBMFont* undeafen_text = CCLabelBMFont::create("Undeafen percentage:", "bigFont.fnt");
 
@@ -512,6 +524,8 @@ class ADPSettingsLayer : public geode::Popup {
         undeafen_input->setAnchorPoint(ccp(1.f,0.5f));
 
         undeafen_input->setScale(0.9f);
+
+        undeafen_input->setID("undeafen-input");
 
         row3->addChildAtPosition(undeafen_input, Anchor::Right, ccp(-10.f,0.f));
 
@@ -549,6 +563,8 @@ class ADPSettingsLayer : public geode::Popup {
 
         version_text->setPosition(ccp(353,9));
 
+        version_text->setID("version-text");
+
         m_mainLayer->addChild(version_text);
 
         return true;
@@ -556,6 +572,30 @@ class ADPSettingsLayer : public geode::Popup {
     }
 
     void onClose(CCObject* obj) override {
+
+        std::optional<int> _dp = geode::utils::numFromString<int>(
+
+            ((TextInput*)(m_mainLayer->getChildByIDRecursive("deafen-input")))->getString()
+
+        ).ok();
+
+        if (_dp.has_value()) {
+
+            current_level.deafen_percentage = _dp.value();
+
+        }
+
+        std::optional<int> _up = geode::utils::numFromString<int>(
+
+            ((TextInput*)(m_mainLayer->getChildByIDRecursive("undeafen-input")))->getString()
+
+        ).ok();
+
+        if (_up.has_value()) {
+
+            current_level.undeafen_percentage = _up.value();
+
+        }
 
         Mod::get()->setSavedValue<LevelConfig>(std::to_string(level_id), current_level);
 
@@ -582,6 +622,14 @@ class ADPSettingsLayer : public geode::Popup {
         delete pp;
 
         return nullptr;
+
+    }
+
+    void onADPLayerEnableToggle(CCObject* sendor) {
+
+        current_level.enable = !current_level.enable;
+
+        return;
 
     }
 
@@ -619,8 +667,6 @@ class $modify(ADPPlayLayer, PlayLayer) {
             LevelConfig()
 
         );
-
-        current_level = LevelConfig();
 
         geode::log::info(
 
