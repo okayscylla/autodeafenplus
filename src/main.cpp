@@ -652,6 +652,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             active = false;
 
+            press_keys(std::vector<int>{17, 16,68});
+
             geode::log::info("Disabled auto deafen");
 
         }
@@ -718,6 +720,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 active = false;
 
+                press_keys(std::vector<int>{17, 16,68});
+
                 geode::log::info("Disabled auto deafen (player died)");
 
             }
@@ -733,6 +737,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
         if (active && (current_percentage < current_level.deafen_percentage)) {
 
             active = false;
+
+            press_keys(std::vector<int>{17, 16,68});
 
             geode::log::info("Disabled auto deafen (before deafen percent)");
 
@@ -750,6 +756,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 active = false;
 
+                press_keys(std::vector<int>{17, 16,68});
+
                 geode::log::info("Disabled auto deafen (passed undeafen percent)");
 
                 return;
@@ -757,6 +765,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
             }
 
             active = true;
+
+            press_keys(std::vector<int>{17, 16,68});
 
             geode::log::info("Enabled auto deafen (passed deafen percent)");
 
@@ -771,6 +781,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
         if (settings.enable && current_level.enable && settings.pause_toggle && active) {
 
             active = false;
+
+            press_keys(std::vector<int>{17, 16,68});
 
             geode::log::info("Disabled auto deafen (paused)");
 
@@ -792,6 +804,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 active = false;
 
+                press_keys(std::vector<int>{17, 16,68});
+
                 geode::log::info("Disabled auto deafen (past undeafen percentage)");
 
                 return;
@@ -799,6 +813,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
             }
 
             active = true;
+
+            press_keys(std::vector<int>{17, 16,68});
 
             geode::log::info("Enabled auto deafen (unpaused)");
 
@@ -813,6 +829,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
         if (!settings.enable || !current_level.enable || !active) { return; }
 
         active = false;
+
+        press_keys(std::vector<int>{17, 16,68});
 
         geode::log::info("Disabled auto deafen (end animation)");
 
