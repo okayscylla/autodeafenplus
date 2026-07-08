@@ -2,7 +2,7 @@ on: [push]
 jobs:
   fetch-geode-version:
     name: Get Geode Version
-    runs-on: ubuntu-latest
+    runs-on: docker
     outputs:
       geode_ver: ${{ steps.get_version.outputs.geode_version }}
     steps:
