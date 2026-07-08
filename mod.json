@@ -16,6 +16,9 @@
 		"utility",
 		"offline"
 	],
+	"links": {
+		"source": "https://github.com/okayscylla/autodeafenplus"
+	},
 	"settings": {
 		"general": {
 			"type": "title",
