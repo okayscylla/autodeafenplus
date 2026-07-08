@@ -44,6 +44,8 @@
 
 # include <cstring>
 
+# include <sstream>
+
 # include <string>
 
 # include <vector>
@@ -73,11 +75,11 @@ struct Settings {
 
     int undeafen_percentage;
 
-    Keybind discord_keybind;
+    std::vector<int> discord_keybind;
 
     Settings (
 
-        bool _e, bool _u, bool _pt, bool _s, bool _ps, int _d, int _up, Keybind _k
+        bool _e, bool _u, bool _pt, bool _s, bool _ps, int _d, int _up, std::vector<int> _k
 
     ) :
 
@@ -103,7 +105,35 @@ struct Settings {
 
         undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage")),
 
-        discord_keybind(Mod::get()->getSettingValue<std::vector<geode::Keybind>>("discord_keybind")[0])
+        discord_keybind([]() {
+
+            std::stringstream _s(
+
+                Mod::get()->getSettingValue<std::vector<geode::Keybind>>("discord_keybind")[0].toString()
+
+            );
+
+            std::string _i;
+
+            std::vector<int> codes;
+
+            while(std::getline(_s, _i, '+')) {
+
+                codes.insert(
+
+                    codes.end(),
+
+                    WINDOWS_KEYCODES.at(_i)
+
+                );
+
+            }
+
+            geode::log::info("Found discord keybind: {}", codes);
+
+            return codes;
+
+        }())
 
     {}
 
@@ -232,7 +262,39 @@ $on_mod(Loaded) {
 
         "undeafen_percentage",
 
-        [](int value) { current_level.undeafen_percentage = value; }
+        [](int value) { settings.undeafen_percentage = value; }
+
+    );
+
+    listenForSettingChanges<std::vector<geode::Keybind>>(
+
+        "discord-keybind",
+
+        [](std::vector<geode::Keybind> value) {
+
+            std::stringstream _s(value[0].toString());
+
+            std::string _i;
+
+            std::vector<int> codes;
+
+            while(std::getline(_s, _i, '+')) {
+
+                codes.insert(
+
+                    codes.end(),
+
+                    WINDOWS_KEYCODES.at(_i)
+
+                );
+
+            }
+
+            settings.discord_keybind = codes;
+
+            geode::log::info("Updated discord keybind: {}", codes);
+
+        }
 
     );
 
