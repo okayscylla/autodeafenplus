@@ -3,7 +3,7 @@
 # include <string>
 
 
-// programmatically stripped from evdev.ecodes
+// programmatically stripped from evdev.ecodes, with slight modifications
 const std::unordered_map<std::string, int> LINUX_KEYCODES = {
 
     {"0",11},
@@ -1065,7 +1065,7 @@ const std::unordered_map<std::string, int> WINDOWS_KEYCODES = {
     {"CLEAR",12},
     {"RETURN",13},
     {"SHIFT",16},
-    {"CONTROL",17},
+    {"CTRL",17},
     {"MENU",18},
     {"PAUSE",19},
     {"CAPITAL",20},

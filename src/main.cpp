@@ -44,11 +44,15 @@
 
 # include <cstring>
 
+# include <cctype>
+
 # include <sstream>
 
 # include <string>
 
 # include <vector>
+
+# include <algorithm>
 
 
 # include <zmq.hpp>
@@ -119,13 +123,29 @@ struct Settings {
 
             while(std::getline(_s, _i, '+')) {
 
-                codes.insert(
+                try {
 
-                    codes.end(),
+                    std::transform(
 
-                    WINDOWS_KEYCODES.at(_i)
+                        _i.begin(), _i.end(), _i.begin(),
 
-                );
+                        [](unsigned char c){ return std::toupper(c); }
+
+                    );
+
+                    codes.insert(
+
+                        codes.end(),
+
+                        WINDOWS_KEYCODES.at(_i)
+
+                    );
+
+                } catch (std::out_of_range) {
+
+                    geode::log::error("Failed to find keycode for key \"{}\"", _i);
+
+                }
 
             }
 
@@ -280,13 +300,29 @@ $on_mod(Loaded) {
 
             while(std::getline(_s, _i, '+')) {
 
-                codes.insert(
+                try {
 
-                    codes.end(),
+                    std::transform(
 
-                    WINDOWS_KEYCODES.at(_i)
+                        _i.begin(), _i.end(), _i.begin(),
 
-                );
+                        [](unsigned char c){ return std::toupper(c); }
+
+                    );
+
+                    codes.insert(
+
+                        codes.end(),
+
+                        WINDOWS_KEYCODES.at(_i)
+
+                    );
+
+                } catch (std::out_of_range) {
+
+                    geode::log::error("Failed to find keycode for key \"{}\"", _i);
+
+                }
 
             }
 
@@ -396,43 +432,39 @@ $on_game(Loaded) {
 }
 
 
-const void press_keys(const std::vector<int> keycodes) {
+const void press_keys(const std::vector<int>* keycodes) {
 
-    if (keycodes.size() == 0) { return; }
+    if (keycodes->size() == 0) { return; }
 
-    INPUT keycombo[keycodes.size() * 2]; // fuck C99
+    INPUT keycombo[keycodes->size() * 2]; // fuck C99
 
     switch (user_platform) {
 
-        case 0: // windows, using separate thread as SendInput is blocking
+        case 1: // windows, on main thread as while SendInput is blocking, it has very minimal overhead
 
-            async::runtime().spawnBlocking<void>([keycodes, &keycombo] {
+            for (int i = 0; i < keycodes->size(); i++) {
 
-                for (int i = 0; i < keycodes.size(); i++) {
+                keycombo[i].type = INPUT_KEYBOARD;
 
-                    keycombo[i].type = INPUT_KEYBOARD;
+                keycombo[i].ki.wScan = (*keycodes)[i];
 
-                    keycombo[i].ki.wScan = keycodes[i];
+            }
 
-                }
+            for (int i = keycodes->size(); i > 0; i--) {
 
-                for (int i = keycodes.size(); i > 0; i--) {
+                keycombo[(keycodes->size() * 2) - i].type = INPUT_KEYBOARD;
 
-                    keycombo[(keycodes.size() * 2) - i].type = INPUT_KEYBOARD;
+                keycombo[(keycodes->size() * 2) - i].ki.wScan = (*keycodes)[i - 1];
 
-                    keycombo[(keycodes.size() * 2) - i].ki.wScan = keycodes[i - 1];
+                keycombo[(keycodes->size() * 2) - i].ki.dwFlags = KEYEVENTF_KEYUP;
 
-                    keycombo[(keycodes.size() * 2) - i].ki.dwFlags = KEYEVENTF_KEYUP;
+            }
 
-                }
-
-                SendInput((keycodes.size() * 2), keycombo, sizeof(INPUT));
-
-            });
+            SendInput((keycodes->size() * 2), keycombo, sizeof(INPUT));
 
             break;
 
-        case 1: // linux, on main thread as zmq::send is non blocking
+        case 0: // linux, on main thread as zmq::send is non blocking
 
             break;
 
@@ -714,7 +746,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             active = false;
 
-            press_keys(std::vector<int>{17, 16,68});
+            press_keys(&settings.discord_keybind);
 
             geode::log::info("Disabled auto deafen");
 
@@ -782,7 +814,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 active = false;
 
-                press_keys(std::vector<int>{17, 16,68});
+                press_keys(&settings.discord_keybind);
 
                 geode::log::info("Disabled auto deafen (player died)");
 
@@ -800,7 +832,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             active = false;
 
-            press_keys(std::vector<int>{17, 16,68});
+            press_keys(&settings.discord_keybind);
 
             geode::log::info("Disabled auto deafen (before deafen percent)");
 
@@ -818,7 +850,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 active = false;
 
-                press_keys(std::vector<int>{17, 16,68});
+                press_keys(&settings.discord_keybind);
 
                 geode::log::info("Disabled auto deafen (passed undeafen percent)");
 
@@ -828,7 +860,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             active = true;
 
-            press_keys(std::vector<int>{17, 16,68});
+            press_keys(&settings.discord_keybind);
 
             geode::log::info("Enabled auto deafen (passed deafen percent)");
 
@@ -844,7 +876,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             active = false;
 
-            press_keys(std::vector<int>{17, 16,68});
+            press_keys(&settings.discord_keybind);
 
             geode::log::info("Disabled auto deafen (paused)");
 
@@ -866,7 +898,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 active = false;
 
-                press_keys(std::vector<int>{17, 16,68});
+                press_keys(&settings.discord_keybind);
 
                 geode::log::info("Disabled auto deafen (past undeafen percentage)");
 
@@ -876,7 +908,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             active = true;
 
-            press_keys(std::vector<int>{17, 16,68});
+            press_keys(&settings.discord_keybind);
 
             geode::log::info("Enabled auto deafen (unpaused)");
 
@@ -892,7 +924,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         active = false;
 
-        press_keys(std::vector<int>{17, 16,68});
+        press_keys(&settings.discord_keybind);
 
         geode::log::info("Disabled auto deafen (end animation)");
 
