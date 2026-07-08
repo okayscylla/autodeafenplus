@@ -440,7 +440,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
     switch (user_platform) {
 
-        case 1: // windows, on main thread as while SendInput is blocking, it has very minimal overhead
+        case 0: // windows, on main thread as while SendInput is blocking, it has very minimal overhead
 
             for (int i = 0; i < keycodes->size(); i++) {
 
@@ -464,7 +464,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
             break;
 
-        case 0: // linux, on main thread as zmq::send is non blocking
+        case 1: // linux, on main thread as zmq::send is non blocking
 
             break;
 
