@@ -1,0 +1,57 @@
+on: [push]
+jobs:
+  fetch-geode-version:
+    name: Get Geode Version
+    runs-on: ubuntu-latest
+    outputs:
+      geode_ver: ${{ steps.get_version.outputs.geode_version }}
+    steps:
+    - name: Get latest release tag
+      id: get_version
+      run: |
+        GEODE_VERSION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/geode-sdk/geode/releases/latest | jq -r .tag_name)
+
+        GEODE_VERSION=${GEODE_VERSION#v}
+        echo "geode_version=$GEODE_VERSION"
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - name: Windows
+          os: windows-latest
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    needs: ['fetch-geode-version']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: okayscylla/autodeafenplus
+          path: autodeafenplus-build
+      - name: Build the mod
+        uses: ./
+        with:
+          sdk: given
+          build-config: Release
+          path: autodeafenplus-build
+          export-pdb: true
+          bundle-pdb: true
+          export-symbols: true
+          combine: true
+          target: ${{ matrix.config.target }}
+  package:
+    name: Package builds
+    runs-on: ubuntu-latest
+    needs: ['build']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./combine
+        id: build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build Output
+          path: ${{ steps.build.outputs.build-output }}
