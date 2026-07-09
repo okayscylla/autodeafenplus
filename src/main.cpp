@@ -133,13 +133,28 @@ struct Settings {
 
                     );
 
-                    codes.insert(
+                    // TODO: clean this up
+                    if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
 
-                        codes.end(),
+                        codes.insert(
 
-                        WINDOWS_KEYCODES.at(_i)
+                            codes.end(),
 
-                    );
+                            LINUX_KEYCODES.at(_i)
+
+                        );
+
+                    } else {
+
+                        codes.insert(
+
+                            codes.end(),
+
+                            WINDOWS_KEYCODES.at(_i)
+
+                        );
+
+                    }
 
                 } catch (std::out_of_range) {
 
@@ -228,115 +243,6 @@ int user_platform;
 bool active = false;
 
 
-$on_mod(Loaded) {
-
-    listenForSettingChanges<bool>(
-
-        "enable",
-
-        [](bool value) { settings.enable = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "undeafen",
-
-        [](bool value) { settings.undeafen = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "pause_toggle",
-
-        [](int value) { settings.pause_toggle = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "startpos",
-
-        [](int value) { settings.startpos = value; }
-
-    );
-
-    listenForSettingChanges<bool>(
-
-        "practise",
-
-        [](int value) { settings.practise = value; }
-
-    );
-
-    listenForSettingChanges<int>(
-
-        "deafen_percentage",
-
-        [](int value) { settings.deafen_percentage = value; }
-
-    );
-
-    listenForSettingChanges<int>(
-
-        "undeafen_percentage",
-
-        [](int value) { settings.undeafen_percentage = value; }
-
-    );
-
-    listenForSettingChanges<std::vector<geode::Keybind>>(
-
-        "discord-keybind",
-
-        [](std::vector<geode::Keybind> value) {
-
-            std::stringstream _s(value[0].toString());
-
-            std::string _i;
-
-            std::vector<int> codes;
-
-            while(std::getline(_s, _i, '+')) {
-
-                try {
-
-                    std::transform(
-
-                        _i.begin(), _i.end(), _i.begin(),
-
-                        [](unsigned char c){ return std::toupper(c); }
-
-                    );
-
-                    codes.insert(
-
-                        codes.end(),
-
-                        WINDOWS_KEYCODES.at(_i)
-
-                    );
-
-                } catch (std::out_of_range) {
-
-                    geode::log::error("Failed to find keycode for key \"{}\"", _i);
-
-                }
-
-            }
-
-            settings.discord_keybind = codes;
-
-            geode::log::info("Updated discord keybind: {}", codes);
-
-        }
-
-    );
-
-}
-
-
 $on_game(Loaded) {
 
     if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
@@ -421,6 +327,25 @@ $on_game(Loaded) {
 
         RegCloseKey(environment_key);
 
+        // shutdown existing bridge if already running
+        zmq::context_t _c;
+
+        zmq::socket_t _s(_c, zmq::socket_type::push);
+
+        _s.bind("tcp://localhost:6767");
+
+        matjson::Value _shutdown_req;
+
+        _shutdown_req["type"] = "shutdown";
+
+        _shutdown_req["keys"] = std::vector<int>(); // for clarity
+
+        std::string _raw = _shutdown_req.dump(matjson::NO_INDENTATION);
+
+        _s.send(zmq::buffer(_raw), zmq::send_flags::dontwait);
+
+        _s.close();
+
     } else {
 
         geode::log::info("Detected Windows environment");
@@ -428,6 +353,139 @@ $on_game(Loaded) {
         user_platform = 0;
 
     }
+
+}
+
+
+$on_mod(Loaded) {
+
+    listenForSettingChanges<bool>(
+
+        "enable",
+
+        [](bool value) { settings.enable = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "undeafen",
+
+        [](bool value) { settings.undeafen = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "pause_toggle",
+
+        [](int value) { settings.pause_toggle = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "startpos",
+
+        [](int value) { settings.startpos = value; }
+
+    );
+
+    listenForSettingChanges<bool>(
+
+        "practise",
+
+        [](int value) { settings.practise = value; }
+
+    );
+
+    listenForSettingChanges<int>(
+
+        "deafen_percentage",
+
+        [](int value) { settings.deafen_percentage = value; }
+
+    );
+
+    listenForSettingChanges<int>(
+
+        "undeafen_percentage",
+
+        [](int value) { settings.undeafen_percentage = value; }
+
+    );
+
+    listenForSettingChanges<std::vector<geode::Keybind>>(
+
+        "discord-keybind",
+
+        [](std::vector<geode::Keybind> value) {
+
+            std::stringstream _s(value[0].toString());
+
+            std::string _i;
+
+            std::vector<int> codes;
+
+            while(std::getline(_s, _i, '+')) {
+
+                try {
+
+                    std::transform(
+
+                        _i.begin(), _i.end(), _i.begin(),
+
+                        [](unsigned char c){ return std::toupper(c); }
+
+                    );
+
+                    switch (user_platform) {
+
+                        case 0:
+
+                            codes.insert(
+
+                                codes.end(),
+
+                                WINDOWS_KEYCODES.at(_i)
+
+                            );
+
+                            break;
+
+                        case 1:
+
+                            codes.insert(
+
+                                codes.end(),
+
+                                LINUX_KEYCODES.at(_i)
+
+                            );
+
+                            break;
+
+                        default:
+
+                            geode::log::error("No keycode table for platform {}", user_platform);
+
+                    }
+
+                } catch (std::out_of_range) {
+
+                    geode::log::error("Failed to find keycode for key \"{}\"", _i);
+
+                }
+
+            }
+
+            settings.discord_keybind = codes;
+
+            geode::log::info("Updated discord keybind: {}", codes);
+
+        }
+
+    );
 
 }
 
