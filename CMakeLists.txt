@@ -25,6 +25,6 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 CPMAddPackage("gh:zeromq/libzmq#master")
 CPMAddPackage("gh:zeromq/cppzmq#master")
 
-target_link_libraries(autodeafenplus cppzmq)
+target_link_libraries(autodeafenplus cppzmq-static)
 
 setup_geode_mod(${PROJECT_NAME})

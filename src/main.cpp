@@ -243,6 +243,11 @@ int user_platform;
 bool active = false;
 
 
+zmq::context_t b_context;
+
+zmq::socket_t b_socket(b_context, zmq::socket_type::push);
+
+
 $on_game(Loaded) {
 
     if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
@@ -328,9 +333,8 @@ $on_game(Loaded) {
         RegCloseKey(environment_key);
 
         // shutdown existing bridge if already running
-        zmq::context_t _c;
 
-        zmq::socket_t _s(_c, zmq::socket_type::push);
+        zmq::socket_t _s(b_context, zmq::socket_type::push);
 
         _s.bind("tcp://localhost:6767");
 
@@ -340,11 +344,23 @@ $on_game(Loaded) {
 
         _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-        std::string _raw = _shutdown_req.dump(matjson::NO_INDENTATION);
+        _s.send(
 
-        _s.send(zmq::buffer(_raw), zmq::send_flags::dontwait);
+            zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
+
+            zmq::send_flags::dontwait
+
+        );
 
         _s.close();
+
+        // startup new bridge
+
+        std::system("geode/resources/okayscylla.autodeafenplus/bridge"); // FIXME: unsafe system call
+
+        // reconnect and get ready for input
+
+        b_socket.bind("tcp://localhost:6767");
 
     } else {
 
@@ -353,6 +369,31 @@ $on_game(Loaded) {
         user_platform = 0;
 
     }
+
+}
+
+
+$on_game(Exiting) {
+
+    matjson::Value _shutdown_req;
+
+    _shutdown_req["type"] = "shutdown";
+
+    _shutdown_req["keys"] = std::vector<int>(); // for clarity
+
+    b_socket.send(
+
+        zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
+
+        zmq::send_flags::dontwait
+
+    );
+
+    b_socket.close();
+
+    b_context.shutdown();
+
+    b_socket.close();
 
 }
 
@@ -496,9 +537,11 @@ const void press_keys(const std::vector<int>* keycodes) {
 
     INPUT keycombo[keycodes->size() * 2]; // fuck C99
 
+    matjson::Value _input_req;
+
     switch (user_platform) {
 
-        case 0: // windows, on main thread as while SendInput is blocking, it has very minimal overhead
+        case 0: // windows, on main thread as while SendInput is blocking, has very minimal overhead
 
             for (int i = 0; i < keycodes->size(); i++) {
 
@@ -523,6 +566,18 @@ const void press_keys(const std::vector<int>* keycodes) {
             break;
 
         case 1: // linux, on main thread as zmq::send is non blocking
+
+            _input_req["type"] = "input";
+
+            _input_req["keys"] = *keycodes;
+
+            b_socket.send(
+
+                zmq::buffer(_input_req.dump(matjson::NO_INDENTATION)),
+
+                zmq::send_flags::dontwait
+
+            );
 
             break;
 
