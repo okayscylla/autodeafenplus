@@ -334,15 +334,15 @@ $on_game(Loaded) {
 
         _s.bind("tcp://localhost:6767");
 
-        // matjson::Value _shutdown_req;
+        matjson::Value _shutdown_req;
 
-        // _shutdown_req["type"] = "shutdown";
+        _shutdown_req["type"] = "shutdown";
 
-        // _shutdown_req["keys"] = std::vector<int>(); // for clarity
+        _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-        // std::string _raw = _shutdown_req.dump(matjson::NO_INDENTATION);
+        std::string _raw = _shutdown_req.dump(matjson::NO_INDENTATION);
 
-        // _s.send(zmq::buffer(_raw), zmq::send_flags::dontwait);
+        _s.send(zmq::buffer(_raw), zmq::send_flags::dontwait);
 
         _s.close();
 
