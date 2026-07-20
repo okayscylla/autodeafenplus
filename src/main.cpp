@@ -243,9 +243,9 @@ int user_platform;
 bool active = false;
 
 
-zmq::context_t b_context;
+// zmq::context_t b_context;
 
-zmq::socket_t b_socket(b_context, zmq::socket_type::push);
+// zmq::socket_t b_socket(b_context, zmq::socket_type::push);
 
 
 $on_game(Loaded) {
@@ -334,33 +334,33 @@ $on_game(Loaded) {
 
         // shutdown existing bridge if already running
 
-        zmq::socket_t _s(b_context, zmq::socket_type::push);
+        // zmq::socket_t _s(b_context, zmq::socket_type::push);
 
-        _s.bind("tcp://localhost:6767");
+        // _s.bind("tcp://localhost:6767");
 
-        matjson::Value _shutdown_req;
+        // matjson::Value _shutdown_req;
 
-        _shutdown_req["type"] = "shutdown";
+        // _shutdown_req["type"] = "shutdown";
 
-        _shutdown_req["keys"] = std::vector<int>(); // for clarity
+        // _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-        _s.send(
+        // _s.send(
 
-            zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
+        //     zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
 
-            zmq::send_flags::dontwait
+        //     zmq::send_flags::dontwait
 
-        );
+        // );
 
-        _s.close();
+        // _s.close();
 
-        // startup new bridge
+        // // startup new bridge
 
-        std::system("geode/resources/okayscylla.autodeafenplus/bridge"); // FIXME: unsafe system call
+        // std::system("geode/resources/okayscylla.autodeafenplus/bridge"); // FIXME: unsafe system call
 
-        // reconnect and get ready for input
+        // // reconnect and get ready for input
 
-        b_socket.bind("tcp://localhost:6767");
+        // b_socket.bind("tcp://localhost:6767");
 
     } else {
 
@@ -375,25 +375,25 @@ $on_game(Loaded) {
 
 $on_game(Exiting) {
 
-    matjson::Value _shutdown_req;
+    // matjson::Value _shutdown_req;
 
-    _shutdown_req["type"] = "shutdown";
+    // _shutdown_req["type"] = "shutdown";
 
-    _shutdown_req["keys"] = std::vector<int>(); // for clarity
+    // _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-    b_socket.send(
+    // b_socket.send(
 
-        zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
+    //     zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
 
-        zmq::send_flags::dontwait
+    //     zmq::send_flags::dontwait
 
-    );
+    // );
 
-    b_socket.close();
+    // b_socket.close();
 
-    b_context.shutdown();
+    // b_context.shutdown();
 
-    b_socket.close();
+    // b_socket.close();
 
 }
 
@@ -547,7 +547,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
                 keycombo[i].type = INPUT_KEYBOARD;
 
-                keycombo[i].ki.wScan = (*keycodes)[i];
+                keycombo[i].ki.wVk = (*keycodes)[i];
 
             }
 
@@ -555,7 +555,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
                 keycombo[(keycodes->size() * 2) - i].type = INPUT_KEYBOARD;
 
-                keycombo[(keycodes->size() * 2) - i].ki.wScan = (*keycodes)[i - 1];
+                keycombo[(keycodes->size() * 2) - i].ki.wVk = (*keycodes)[i - 1];
 
                 keycombo[(keycodes->size() * 2) - i].ki.dwFlags = KEYEVENTF_KEYUP;
 
@@ -567,17 +567,17 @@ const void press_keys(const std::vector<int>* keycodes) {
 
         case 1: // linux, on main thread as zmq::send is non blocking
 
-            _input_req["type"] = "input";
+            // _input_req["type"] = "input";
 
-            _input_req["keys"] = *keycodes;
+            // _input_req["keys"] = *keycodes;
 
-            b_socket.send(
+            // b_socket.send(
 
-                zmq::buffer(_input_req.dump(matjson::NO_INDENTATION)),
+            //     zmq::buffer(_input_req.dump(matjson::NO_INDENTATION)),
 
-                zmq::send_flags::dontwait
+            //     zmq::send_flags::dontwait
 
-            );
+            // );
 
             break;
 
