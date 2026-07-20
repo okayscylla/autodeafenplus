@@ -55,7 +55,7 @@
 # include <algorithm>
 
 
-# include <zmq.hpp>
+// # include <zmq.hpp>
 
 # include "keycodes.h"
 
@@ -737,6 +737,16 @@ class ADPSettingsLayer : public geode::Popup {
         row3->addChildAtPosition(undeafen_input, Anchor::Right, ccp(-10.f,0.f));
 
         row3->updateLayout();
+
+        if (!settings.undeafen) {
+
+            row3->setOpacity(67);
+
+            undeafen_input->setCallbackEnabled(false);
+
+            undeafen_input->setEnabled(false);
+
+        }
 
         // putting it together
 
