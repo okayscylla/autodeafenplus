@@ -16,16 +16,16 @@
 
 If you have any issues feel free to reach out to me on Discord (username: okayscylla).
 
+## Known Bugs
+
+* When using a non **US (ANSI) keyboard** layout on Windows, some autodeafen keybinds (including the default deafen keybind in Discord of **Control+Shift+/**) may not work. While a fix for this is in the works, this issue can currently be mitigated by setting a new deafen keybind in Discord to a combination of **(Ctrl | Shift | Alt)** and **(any number or letter)**. From here, **AutoDeafen+** *should* work as long as the ingame mod config has been updated to reflect the new key combo.
+
 ## Linux Specific Info
 
-In order to get **AutoDeafen+** running properly in Linux, you will need a few things.
+Getting **Autodeafen+** to run on Linux may need some manual configuration. If the mod is not working properly on Linux, try the following things:
 
-* the python packages evdev and pyzmq installed on your system (most likely from your distribution's packages manager)
-* if using Wayland, a compositor that supports some form of global hotkeys (ie: KDE Plasma, GNOME, Hyprland)
-
-After fufilling these requirements (configuring global hotkeys to passthrough Discord on Wayland), **AutoDeafen+** *should* work.
-
-Alternatively, a single file binary bundled with a Python runtime and the required packages can also be used (can be enabled in mod settings). However, this will cause a slight increase in memory usage (about a ~2mb increase on my computer). This removes the need for evdev and pyzmq to be installed as dependencies.
+* ensure the user running Geometry Dash is part of the **input** group (run **"sudo usermod -a -G input $USER"** in your terminal application)
+* **(REQUIRED FOR WAYLAND SESSIONS)** setup global hotkeys in your compositor for your Discord deafen keybind
 
 ## Acknowledgements
 
