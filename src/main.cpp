@@ -57,7 +57,7 @@
 
 // # include <zmq.hpp>
 
-# include "keycodes.h"
+// # include "keycodes.h"
 
 
 using namespace geode::prelude;
@@ -134,25 +134,26 @@ struct Settings {
                     );
 
                     // TODO: clean this up
+
                     if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
 
-                        codes.insert(
+                        // codes.insert(
 
-                            codes.end(),
+                        //     codes.end(),
 
-                            LINUX_KEYCODES.at(_i)
+                        //     LINUX_KEYCODES.at(_i)
 
-                        );
+                        // );
 
                     } else {
 
-                        codes.insert(
+                        // codes.insert(
 
-                            codes.end(),
+                        //     codes.end(),
 
-                            WINDOWS_KEYCODES.at(_i)
+                        //     WINDOWS_KEYCODES.at(_i)
 
-                        );
+                        // );
 
                     }
 
@@ -163,6 +164,22 @@ struct Settings {
                 }
 
             }
+
+            codes.insert(
+
+                codes.end(),
+
+                VK_CONTROL
+
+            );
+
+            codes.insert(
+
+                codes.end(),
+
+                'Y'
+
+            );
 
             geode::log::info("Found discord keybind: {}", codes);
 
@@ -484,25 +501,25 @@ $on_mod(Loaded) {
 
                         case 0:
 
-                            codes.insert(
+                            //     codes.insert(
 
-                                codes.end(),
+                            //         codes.end(),
 
-                                WINDOWS_KEYCODES.at(_i)
+                            //         WINDOWS_KEYCODES.at(_i)
 
-                            );
+                            //     );
 
                             break;
 
                         case 1:
 
-                            codes.insert(
+                            // codes.insert(
 
-                                codes.end(),
+                            //     codes.end(),
 
-                                LINUX_KEYCODES.at(_i)
+                            //     LINUX_KEYCODES.at(_i)
 
-                            );
+                            // );
 
                             break;
 
@@ -535,57 +552,39 @@ const void press_keys(const std::vector<int>* keycodes) {
 
     if (keycodes->size() == 0) { return; }
 
-    INPUT keycombo[keycodes->size() * 2]; // fuck C99
+    if (user_platform == 1) { // linux, on main thread as zmq::send is non blocking
 
-    matjson::Value _input_req;
+    } else if (user_platform == 0) { // windows, on main thread as while SendInput is blocking, has very minimal overhead
 
-    switch (user_platform) {
+        INPUT keycombo[sizeof(*keycodes) * 2] = {};
 
-        case 0: // windows, on main thread as while SendInput is blocking, has very minimal overhead
+        ZeroMemory(keycombo, sizeof(keycombo));
 
-            for (int i = 0; i < keycodes->size(); i++) {
+        for (int i = 0; i < keycodes->size() * 2; i ++) {
+
+            if (i < keycodes->size()) {
 
                 keycombo[i].type = INPUT_KEYBOARD;
 
-                keycombo[i].ki.wVk = (*keycodes)[i];
+                keycombo[i].ki.wVk = keycodes->at(i);
+
+            } else {
+
+                keycombo[i].type = INPUT_KEYBOARD;
+
+                keycombo[i].ki.wVk = keycodes->at(i - (keycodes->size() - 1));
+
+                keycombo[i].ki.dwFlags = KEYEVENTF_KEYUP;
 
             }
 
-            for (int i = keycodes->size(); i > 0; i--) {
+        }
 
-                keycombo[(keycodes->size() * 2) - i].type = INPUT_KEYBOARD;
+        SendInput(ARRAYSIZE(keycombo), keycombo, sizeof(INPUT));
 
-                keycombo[(keycodes->size() * 2) - i].ki.wVk = (*keycodes)[i - 1];
+    } else { // something has gone terribly wrong
 
-                keycombo[(keycodes->size() * 2) - i].ki.dwFlags = KEYEVENTF_KEYUP;
-
-            }
-
-            SendInput((keycodes->size() * 2), keycombo, sizeof(INPUT));
-
-            break;
-
-        case 1: // linux, on main thread as zmq::send is non blocking
-
-            // _input_req["type"] = "input";
-
-            // _input_req["keys"] = *keycodes;
-
-            // b_socket.send(
-
-            //     zmq::buffer(_input_req.dump(matjson::NO_INDENTATION)),
-
-            //     zmq::send_flags::dontwait
-
-            // );
-
-            break;
-
-        default:
-
-            geode::log::error("Invalid platform: {}", user_platform);
-
-        return;
+        geode::log::info("Invalid platform: {}", user_platform);
 
     }
 
