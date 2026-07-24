@@ -139,19 +139,19 @@ const std::unordered_map<std::string, int> WINDOWS_KEYCODES = {
     {"SelectMedia",181},
     {"LaunchApp1",182},
     {"LaunchApp2",183},
-    {";",186},
-    {"=",184},
-    {",",188},
-    {"-",189},
-    {".",190},
-    {"/",191},
-    {"`",192},
-    {"[",219},
-    {"\\",220},
-    {"]",221},
-    {"'",222},
-    // {"OEM8",223},
-    // {"OEM102",226},
+    {";",186},                  // TODO: fix non US (ANSI) layouts
+    {"=",184},                  // TODO: fix non US (ANSI) layouts
+    {",",188},                  // TODO: fix non US (ANSI) layouts
+    {"-",189},                  // TODO: fix non US (ANSI) layouts
+    {".",190},                  // TODO: fix non US (ANSI) layouts
+    {"/",191},                  // TODO: fix non US (ANSI) layouts
+    {"`",192},                  // TODO: fix non US (ANSI) layouts
+    {"[",219},                  // TODO: fix non US (ANSI) layouts
+    {"\\",220},                 // TODO: fix non US (ANSI) layouts
+    {"]",221},                  // TODO: fix non US (ANSI) layouts
+    {"'",222},                  // TODO: fix non US (ANSI) layouts
+    {"OEM8",223},               // TODO: fix non US (ANSI) layouts
+    {"OEM102",226},             // TODO: fix non US (ANSI) layouts
     {"Process",229},
     {"Packet",231},
     {"Attn",246},
