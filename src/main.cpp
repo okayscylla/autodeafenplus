@@ -55,9 +55,7 @@
 # include <algorithm>
 
 
-// # include <zmq.hpp>
-
-// # include "keycodes.h"
+# include "keycodes.h"
 
 
 using namespace geode::prelude;
@@ -109,7 +107,7 @@ struct Settings {
 
         undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage")),
 
-        discord_keybind([]() {
+        discord_keybind([]() -> std::vector<int> {
 
             std::stringstream _s(
 
@@ -125,14 +123,6 @@ struct Settings {
 
                 try {
 
-                    std::transform(
-
-                        _i.begin(), _i.end(), _i.begin(),
-
-                        [](unsigned char c){ return std::toupper(c); }
-
-                    );
-
                     // TODO: clean this up
 
                     if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
@@ -141,19 +131,19 @@ struct Settings {
 
                         //     codes.end(),
 
-                        //     LINUX_KEYCODES.at(_i)
+                        //     WINDOWS_KEYCODES.at(_i)
 
                         // );
 
                     } else {
 
-                        // codes.insert(
+                        codes.insert(
 
-                        //     codes.end(),
+                            codes.end(),
 
-                        //     WINDOWS_KEYCODES.at(_i)
+                            WINDOWS_KEYCODES.at(_i)
 
-                        // );
+                        );
 
                     }
 
@@ -164,22 +154,6 @@ struct Settings {
                 }
 
             }
-
-            codes.insert(
-
-                codes.end(),
-
-                VK_CONTROL
-
-            );
-
-            codes.insert(
-
-                codes.end(),
-
-                'Y'
-
-            );
 
             geode::log::info("Found discord keybind: {}", codes);
 
