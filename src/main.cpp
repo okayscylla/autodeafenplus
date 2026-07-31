@@ -475,13 +475,13 @@ $on_mod(Loaded) {
 
                         case 0:
 
-                                codes.insert(
+                            codes.insert(
 
-                                    codes.end(),
+                                codes.end(),
 
-                                    WINDOWS_KEYCODES.at(_i)
+                                WINDOWS_KEYCODES.at(_i)
 
-                                );
+                            );
 
                             break;
 
@@ -530,7 +530,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
     } else if (user_platform == 0) { // windows, on main thread as while SendInput is blocking, has very minimal overhead
 
-        INPUT keycombo[sizeof(*keycodes) * 2] = {};
+        INPUT keycombo[keycodes->size() * 2];
 
         ZeroMemory(keycombo, sizeof(keycombo));
 
@@ -546,7 +546,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
                 keycombo[i].type = INPUT_KEYBOARD;
 
-                keycombo[i].ki.wVk = keycodes->at(i - keycodes->size());
+                keycombo[i].ki.wVk = keycodes->at((keycodes->size() * 2) - (i + 1));
 
                 keycombo[i].ki.dwFlags = KEYEVENTF_KEYUP;
 
@@ -554,7 +554,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
         }
 
-        SendInput(ARRAYSIZE(keycombo), keycombo, sizeof(INPUT));
+        SendInput(keycodes->size() * 2, keycombo, sizeof(INPUT));
 
     } else { // something has gone terribly wrong
 
