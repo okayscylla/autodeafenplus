@@ -940,6 +940,8 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         if (!active && settings.undeafen && (current_percentage >= current_level.undeafen_percentage)) { return; }
 
+        if (active && settings.undeafen && (current_percentage < current_level.undeafen_percentage)) { return; }
+
         if (current_percentage >= current_level.deafen_percentage) {
 
             if (settings.undeafen && (current_percentage >= current_level.undeafen_percentage)) {
@@ -958,7 +960,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             press_keys(&settings.discord_keybind);
 
-            geode::log::info("Enabled auto deafen (passed deafen percent)");
+            geode::log::info("Enabled auto deafen (past deafen percent)");
 
         }
 
@@ -984,7 +986,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         PlayLayer::resume();
 
-        if (!settings.enable || !current_level.enable || !settings.pause_toggle || active) { return; }
+        if (!settings.enable || !current_level.enable || !settings.pause_toggle || active || (!active && settings.undeafen)) { return; }
 
         int current_percentage = PlayLayer::getCurrentPercentInt();
 
