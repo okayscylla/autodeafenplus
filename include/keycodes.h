@@ -12,7 +12,7 @@ const std::unordered_map<std::string, int> WINDOWS_KEYCODES = {
     {"Clear",12},
     {"Enter",13},
     {"Shift",16},
-    {"Control",17},
+    {"Ctrl",17},
     {"Alt",18},
     {"Pause",19},
     {"CapsLock",20},

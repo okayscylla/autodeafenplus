@@ -475,13 +475,13 @@ $on_mod(Loaded) {
 
                         case 0:
 
-                            //     codes.insert(
+                                codes.insert(
 
-                            //         codes.end(),
+                                    codes.end(),
 
-                            //         WINDOWS_KEYCODES.at(_i)
+                                    WINDOWS_KEYCODES.at(_i)
 
-                            //     );
+                                );
 
                             break;
 
@@ -491,7 +491,7 @@ $on_mod(Loaded) {
 
                             //     codes.end(),
 
-                            //     LINUX_KEYCODES.at(_i)
+                            //     WINDOWS_KEYCODES.at(_i)
 
                             // );
 
@@ -546,7 +546,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
                 keycombo[i].type = INPUT_KEYBOARD;
 
-                keycombo[i].ki.wVk = keycodes->at(i - (keycodes->size() - 1));
+                keycombo[i].ki.wVk = keycodes->at(i - keycodes->size());
 
                 keycombo[i].ki.dwFlags = KEYEVENTF_KEYUP;
 
