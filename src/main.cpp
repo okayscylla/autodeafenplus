@@ -55,7 +55,7 @@
 # include <algorithm>
 
 
-# include <zmq.h>
+# include "zmq.h"
 
 # include "keycodes.h"
 
