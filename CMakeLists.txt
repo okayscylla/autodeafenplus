@@ -31,6 +31,6 @@ CPMAddPackage(
         "ZEROMQ_LIBRARY libzmq"
 )
 
-target_link_libraries(autodeafenplus libzmq.lib)
+target_link_libraries(autodeafenplus libzmq)
 
 setup_geode_mod(${PROJECT_NAME})
