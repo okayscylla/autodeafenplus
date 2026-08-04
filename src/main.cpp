@@ -236,7 +236,7 @@ int user_platform;
 bool active = false;
 
 
-// void *b_context = zmq_ctx_new();
+void *b_context = zmq_ctx_new();
 
 // void *b_socket = zmq_socket(b_context, ZMQ_PUSH);
 
