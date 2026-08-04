@@ -30,6 +30,7 @@ CPMAddPackage(
         "ZMQ_BUILD_TESTS off"
         "ZEROMQ_LIBRARY libzmq"
         "WITH_LIBSODIUM off"
+        "ENABLE_CURVE off"
 )
 
 target_link_libraries(autodeafenplus libzmq)
