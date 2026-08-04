@@ -22,18 +22,11 @@ endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
-add_definitions(-DCMAKE_POLICY_VERSION_MINIMUM=3.5)
-
-CPMFindPackage(
-    NAME libzmq
-
-    GITHUB_REPOSITORY zeromq/libzmq
-    GIT_TAG v4.3.5
+CPMAddPackage(
+    URI  "gh:zeromq/libzmq#master"
 
     OPTIONS
-        "BUILD_SHARED OFF"
-        "CMAKE_POLICY_VERSION_MINIMUM 3.5"
-        "BUILD_TESTS OFF"
+        "MSVC on"
 )
 
 target_link_libraries(autodeafenplus libzmq-static)
