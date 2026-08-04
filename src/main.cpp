@@ -236,9 +236,9 @@ int user_platform;
 bool active = false;
 
 
-// zmq::context_t b_context;
+void *b_context = zmq_ctx_new();
 
-// zmq::socket_t b_socket(b_context, zmq::socket_type::push);
+void *b_socket = zmq_socket(b_context, ZMQ_PUSH);
 
 
 $on_game(Loaded) {
