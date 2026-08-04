@@ -33,6 +33,6 @@ CPMAddPackage(
         "ENABLE_CURVE off"
 )
 
-target_link_libraries(autodeafenplus libzmq)
+target_link_libraries(autodeafenplus libzmq-static)
 
 setup_geode_mod(${PROJECT_NAME})
