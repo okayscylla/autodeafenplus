@@ -26,7 +26,9 @@ CPMAddPackage(
     URI  "gh:zeromq/libzmq#master"
 
     OPTIONS
-        "MSVC on"
+        "BUILD_STATIC on"
+        "ZMQ_BUILD_TESTS off"
+        "ZEROMQ_LIBRARY libzmq"
 )
 
 target_link_libraries(autodeafenplus libzmq-static)
