@@ -29,6 +29,7 @@ CPMAddPackage(
         "BUILD_STATIC on"
         "ZMQ_BUILD_TESTS off"
         "ZEROMQ_LIBRARY libzmq"
+        "WITH_LIBSODIUM off"
 )
 
 target_link_libraries(autodeafenplus libzmq)
