@@ -55,6 +55,8 @@
 # include <algorithm>
 
 
+# include <zmq.hpp>
+
 # include "keycodes.h"
 
 
@@ -234,9 +236,9 @@ int user_platform;
 bool active = false;
 
 
-// zmq::context_t b_context;
+zmq::context_t b_context;
 
-// zmq::socket_t b_socket(b_context, zmq::socket_type::push);
+zmq::socket_t b_socket(b_context, zmq::socket_type::push);
 
 
 $on_game(Loaded) {
@@ -325,9 +327,9 @@ $on_game(Loaded) {
 
         // shutdown existing bridge if already running
 
-        // zmq::socket_t _s(b_context, zmq::socket_type::push);
+        zmq::socket_t _s(b_context, zmq::socket_type::push);
 
-        // _s.bind("tcp://localhost:6767");
+        _s.bind("tcp://localhost:6767");
 
         // matjson::Value _shutdown_req;
 
@@ -349,7 +351,7 @@ $on_game(Loaded) {
 
         // std::system("geode/resources/okayscylla.autodeafenplus/bridge"); // FIXME: unsafe system call
 
-        // // reconnect and get ready for input
+        // reconnect and get ready for input
 
         // b_socket.bind("tcp://localhost:6767");
 
@@ -366,25 +368,25 @@ $on_game(Loaded) {
 
 $on_game(Exiting) {
 
-    // matjson::Value _shutdown_req;
+    matjson::Value _shutdown_req;
 
-    // _shutdown_req["type"] = "shutdown";
+    _shutdown_req["type"] = "shutdown";
 
-    // _shutdown_req["keys"] = std::vector<int>(); // for clarity
+    _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-    // b_socket.send(
+    b_socket.send(
 
-    //     zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
+        zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
 
-    //     zmq::send_flags::dontwait
+        zmq::send_flags::dontwait
 
-    // );
+    );
 
-    // b_socket.close();
+    b_socket.close();
 
-    // b_context.shutdown();
+    b_context.shutdown();
 
-    // b_socket.close();
+    b_socket.close();
 
 }
 
