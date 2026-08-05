@@ -55,7 +55,7 @@
 # include <algorithm>
 
 
-// # include <zmq.h>
+# include <zmq.h>
 
 # include "keycodes.h"
 
@@ -324,6 +324,32 @@ $on_game(Loaded) {
         }
 
         RegCloseKey(environment_key);
+
+        // dynamically load libzmq library from .dll
+
+        geode::log::info("Attempting to dynamically load libzmq.dll");
+
+        HINSTANCE _libzmq = LoadLibraryA((const char *)(Mod::get()->getResourcesDir().append("libzmq.dll").c_str()));
+
+        if (_libzmq != NULL) {
+
+            geode::log::info("Successfully loaded libzmq");
+
+                int * _M;
+
+                int * _m;
+
+                int * _p;
+
+                zmq_version(_m, nullptr, nullptr);
+
+                geode::log::info("Using libzmq version {}.{}.{}", _M, _m, _p);
+
+        } else {
+
+            geode::log::error("Failed to load libzmq.dll");
+
+        }
 
         // shutdown existing bridge if already running
 

@@ -29,13 +29,6 @@ CPMAddPackage(
         "ZMQ_BUILD_TESTS off"
 )
 
-CPMAddPackage(
-    URI  "gh:zeromq/cppzmq#master"
-
-    OPTIONS
-        "CPPZMQ_BUILD_TESTS off"
-)
-
-target_link_libraries(autodeafenplus cppzmq)
+target_link_libraries(autodeafenplus libzmq)
 
 setup_geode_mod(${PROJECT_NAME})
