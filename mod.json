@@ -96,5 +96,10 @@
 				"input": true
 			}
 		}
+	},
+	"resources": {
+		"files": [
+			"build/bin/libzmq.dll"
+		]
 	}
 }
