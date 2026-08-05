@@ -99,7 +99,7 @@
 	},
 	"resources": {
 		"files": [
-			"build/libzmq.dll"
+			"resources/libzmq.dll"
 		]
 	}
 }
