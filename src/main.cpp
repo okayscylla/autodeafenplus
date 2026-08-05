@@ -335,13 +335,13 @@ $on_game(Loaded) {
 
             geode::log::info("Successfully loaded libzmq");
 
-                int * _M;
+                // int * _M;
 
-                int * _m;
+                // int * _m;
 
-                int * _p;
+                // int * _p;
 
-                zmq_version(_m, nullptr, nullptr);
+                // zmq_version(_m, nullptr, nullptr);
 
                 geode::log::info("Using libzmq version {}.{}.{}", _M, _m, _p);
 
