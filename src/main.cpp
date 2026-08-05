@@ -329,7 +329,7 @@ $on_game(Loaded) {
 
         geode::log::info("Attempting to dynamically load libzmq.dll");
 
-        HINSTANCE _libzmq = LoadLibraryA(Mod::get()->getResourcesDir().append("libzmq.dll").c_str());
+        HINSTANCE _libzmq = LoadLibraryA(Mod::get()->getResourcesDir().append("libzmq.dll").string().c_str());
 
         if (_libzmq != NULL) {
 
