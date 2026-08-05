@@ -341,9 +341,9 @@ $on_game(Loaded) {
 
             _s,
 
-            _shutdown_req.dump(matjson::NO_INDENTATION).c_str(),
+            _strdup(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
 
-            _shutdown_req.dump(matjson::NO_INDENTATION).length() * sizeof(char),
+            strlen(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
 
             ZMQ_DONTWAIT
 
