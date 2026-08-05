@@ -329,7 +329,7 @@ $on_game(Loaded) {
 
         void *_s = zmq_socket(b_context, ZMQ_PUSH);
 
-        zmq_bind(_s, "tcp://localhost:6767");
+        zmq_connect(_s, "tcp://localhost:6767");
 
         matjson::Value _shutdown_req;
 
@@ -351,13 +351,13 @@ $on_game(Loaded) {
 
         zmq_close(_s);
 
-        // // startup new bridge
+        // startup new bridge
 
         // std::system("geode/resources/okayscylla.autodeafenplus/bridge"); // FIXME: unsafe system call
 
         // reconnect and get ready for input
 
-        // b_socket.bind("tcp://localhost:6767");
+        zmq_connect(b_socket, "tcp://localhost:6767");
 
     } else {
 
@@ -372,25 +372,27 @@ $on_game(Loaded) {
 
 $on_game(Exiting) {
 
-    // matjson::Value _shutdown_req;
+    matjson::Value _shutdown_req;
 
-    // _shutdown_req["type"] = "shutdown";
+    _shutdown_req["type"] = "shutdown";
 
-    // _shutdown_req["keys"] = std::vector<int>(); // for clarity
+    _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-    // b_socket.send(
+    zmq_send(
 
-    //     zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
+        b_socket,
 
-    //     zmq::send_flags::dontwait
+        _strdup(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
 
-    // );
+        strlen(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
 
-    // b_socket.close();
+        ZMQ_DONTWAIT
 
-    // b_context.shutdown();
+    );
 
-    // b_socket.close();
+    zmq_close(b_socket);
+
+    zmq_ctx_destroy(b_context);
 
 }
 
