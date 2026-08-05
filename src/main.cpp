@@ -325,53 +325,31 @@ $on_game(Loaded) {
 
         RegCloseKey(environment_key);
 
-        // dynamically load libzmq library from .dll
-
-        // geode::log::info("Attempting to dynamically load libzmq.dll");
-
-        // HINSTANCE _libzmq = LoadLibraryA(Mod::get()->getResourcesDir().append("libzmq.dll").string().c_str());
-
-        // if (true) {
-
-        //     geode::log::info("Successfully loaded libzmq");
-
-        //         int * _M;
-
-        //         int * _m;
-
-        //         int * _p;
-
-        //         zmq_version(_M, _m, _p);
-
-        //         geode::log::info("Using libzmq version {}.{}.{}", *_M, *_m, *_p);
-
-        // } else {
-
-        //     geode::log::error("Failed to load libzmq.dll");
-
-        // }
-
         // shutdown existing bridge if already running
 
-        // zmq::socket_t _s(b_context, zmq::socket_type::push);
+        void *_s = zmq_socket(b_context, ZMQ_PUSH);
 
-        // _s.bind("tcp://localhost:6767");
+        zmq_bind(_s, "tcp://localhost:6767");
 
-        // matjson::Value _shutdown_req;
+        matjson::Value _shutdown_req;
 
-        // _shutdown_req["type"] = "shutdown";
+        _shutdown_req["type"] = "shutdown";
 
-        // _shutdown_req["keys"] = std::vector<int>(); // for clarity
+        _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-        // _s.send(
+        zmq_send(
 
-        //     zmq::buffer(_shutdown_req.dump(matjson::NO_INDENTATION)),
+            _s,
 
-        //     zmq::send_flags::dontwait
+            _shutdown_req.dump(matjson::NO_INDENTATION).c_str(),
 
-        // );
+            _shutdown_req.dump(matjson::NO_INDENTATION).length() * sizeof(char),
 
-        // _s.close();
+            ZMQ_DONTWAIT
+
+        );
+
+        zmq_close(_s);
 
         // // startup new bridge
 
