@@ -236,9 +236,9 @@ int user_platform;
 bool active = false;
 
 
-// void *b_context = zmq_ctx_new();
+void *b_context = zmq_ctx_new();
 
-// void *b_socket = zmq_socket(b_context, ZMQ_PUSH);
+void *b_socket = zmq_socket(b_context, ZMQ_PUSH);
 
 
 $on_game(Loaded) {
@@ -327,29 +327,29 @@ $on_game(Loaded) {
 
         // dynamically load libzmq library from .dll
 
-        geode::log::info("Attempting to dynamically load libzmq.dll");
+        // geode::log::info("Attempting to dynamically load libzmq.dll");
 
         // HINSTANCE _libzmq = LoadLibraryA(Mod::get()->getResourcesDir().append("libzmq.dll").string().c_str());
 
-        if (true) {
+        // if (true) {
 
-            geode::log::info("Successfully loaded libzmq");
+        //     geode::log::info("Successfully loaded libzmq");
 
-                int * _M;
+        //         int * _M;
 
-                int * _m;
+        //         int * _m;
 
-                int * _p;
+        //         int * _p;
 
-                zmq_version(_M, _m, _p);
+        //         zmq_version(_M, _m, _p);
 
-                geode::log::info("Using libzmq version {}.{}.{}", *_M, *_m, *_p);
+        //         geode::log::info("Using libzmq version {}.{}.{}", *_M, *_m, *_p);
 
-        } else {
+        // } else {
 
-            geode::log::error("Failed to load libzmq.dll");
+        //     geode::log::error("Failed to load libzmq.dll");
 
-        }
+        // }
 
         // shutdown existing bridge if already running
 
