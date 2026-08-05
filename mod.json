@@ -99,7 +99,7 @@
 	},
 	"resources": {
 		"files": [
-			"_deps/libzmq-build/bin/libzmq.dll"
+			"build/libzmq-build/bin/libzmq.dll"
 		]
 	}
 }
