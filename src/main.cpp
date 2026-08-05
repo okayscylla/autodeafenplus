@@ -495,13 +495,13 @@ $on_mod(Loaded) {
 
                         case 1:
 
-                            // codes.insert(
+                            codes.insert(
 
-                            //     codes.end(),
+                                codes.end(),
 
-                            //     WINDOWS_KEYCODES.at(_i)
+                                LINUX_KEYCODES.at(_i)
 
-                            // );
+                            );
 
                             break;
 
@@ -534,7 +534,7 @@ const void press_keys(const std::vector<int>* keycodes) {
 
     if (keycodes->size() == 0) { return; }
 
-    if (user_platform == 1) { // linux, on main thread as zmq::send is non blocking
+    if (user_platform == 1) { // linux, on main thread as zmq_send is non blocking
 
     } else if (user_platform == 0) { // windows, on main thread as while SendInput is blocking, has very minimal overhead
 

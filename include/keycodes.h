@@ -164,3 +164,166 @@ const std::unordered_map<std::string, int> WINDOWS_KEYCODES = {
     {"OEMClear",254}
 
 };
+
+
+// Linux keycodes, without unknown values set to KEY_AUTOPILOT_ENGAGE_TOGGLE
+
+const std::unordered_map<std::string, int> LINUX_KEYCODES = {
+
+    {"Backspace",14},
+    {"Tab",15},
+    {"Clear",355},
+    {"Enter",28},
+    {"Shift",42},               // Left Shift
+    {"Ctrl",29},                // Left Control
+    {"Alt",56},                 // Left Alt
+    {"Pause",119},
+    {"CapsLock",58},
+    {"Escape",1},
+    {"Space",57},
+    {"PageUp",104},
+    {"PageDown",109},
+    {"End",107},
+    {"Home",102},
+    {"Left",105},
+    {"Up",103},
+    {"Right",106},
+    {"Down",108},
+    {"Select",353},
+    {"Print",210},
+    {"Execute",637},            // Unknown
+    {"PrintScreen",210},        // Print
+    {"Insert",110},
+    {"Delete",111},
+    {"Help",138},
+    {"0",11},
+    {"1",2},
+    {"2",3},
+    {"3",4},
+    {"4",5},
+    {"5",6},
+    {"6",7},
+    {"7",8},
+    {"8",9},
+    {"9",10},
+    {"A",30},
+    {"B",48},
+    {"C",46},
+    {"D",32},
+    {"E",18},
+    {"F",33},
+    {"G",34},
+    {"H",35},
+    {"I",23},
+    {"J",36},
+    {"K",37},
+    {"L",38},
+    {"M",50},
+    {"N",49},
+    {"O",24},
+    {"P",25},
+    {"Q",16},
+    {"R",19},
+    {"S",31},
+    {"T",20},
+    {"U",22},
+    {"V",47},
+    {"W",17},
+    {"X",45},
+    {"Y",21},
+    {"Z",44},
+    {"LeftWindowsKey",125},     // LeftMeta
+    {"RightWindowsKey",126},    // RightMeta
+    {"ApplicationsKey",637},    // Unknown
+    {"Sleep",142},
+    {"NumPad0",512},
+    {"NumPad1",513},
+    {"NumPad2",514},
+    {"NumPad3",515},
+    {"NumPad4",516},
+    {"NumPad5",517},
+    {"NumPad6",518},
+    {"NumPad7",519},
+    {"NumPad8",520},
+    {"NumPad9",521},
+    {"Multiply",637},           // Unknown
+    {"Add",637},                // Unknown
+    {"Seperator",637},          // Unknown
+    {"Subtract",637},           // Unknown
+    {"Decimal",637},            // Unknown
+    {"Divide",637},             // Unknown
+    {"F1",59},
+    {"F2",60},
+    {"F3",61},
+    {"F4",62},
+    {"F5",63},
+    {"F6",64},
+    {"F7",65},
+    {"F8",66},
+    {"F9",67},
+    {"F10",68},
+    {"F11",87},
+    {"F12",88},
+    {"F13",183},
+    {"F14",184},
+    {"F15",185},
+    {"F16",186},
+    {"F17",187},
+    {"F18",188},
+    {"F19",189},
+    {"F20",190},
+    {"F21",191},
+    {"F22",192},
+    {"F23",193},
+    {"F24",194},
+    {"Numlock",69},
+    {"ScrollLock",70},
+    {"LeftShift",42},
+    {"RightShift",54},
+    {"LeftControl",29},
+    {"RightControl",97},
+    {"LeftMenu",139},           // Menu key
+    {"RightMenu",139},          // Menu key
+    {"BrowserBack",158},        // Same as non-browser?
+    {"BrowserForward",159},     // Same as non-browser?
+    {"BrowserRefresh",173},     // Same as non-browser?
+    {"BrowserStop",128},        // Same as non-browser?
+    {"BrowserSearch",217},      // Same as non-browser?
+    {"BrowserFavorites",364},   // Same as non-browser?
+    {"BrowserHome",102},        // Same as non-browser?
+    {"VolumeMute",113},
+    {"VolumeDown",114},
+    {"VolumeUp",115},
+    {"NextTrack",407},
+    {"PreviousTrack",412},
+    {"StopMedia",128},
+    {"PlayPause",164},
+    {"LaunchMail",155},
+    {"SelectMedia",353},
+    {"LaunchApp1",637},         // Unknown
+    {"LaunchApp2",637},         // Unknown
+    {";",39},
+    {"=",13},
+    {",",51}, 
+    {"-",12},
+    {".",52},                   // Unknown
+    {"/",53},
+    {"`",637},                  // Unknown
+    {"[",26},
+    {"\\",43},
+    {"]",27},
+    {"'",222},                  // Unknown
+    {"OEM8",223},               // Unknown
+    {"OEM102",226},             // Unknown
+    {"Process",229},            // Unknown
+    {"Packet",231},             // Unknown
+    {"Attn",246},               // Unknown
+    {"CrSel",247},              // Unknown
+    {"ExSel",248},              // Unknown
+    {"EraseEOF",249},           // Unknown
+    {"Play",207},
+    {"Zoom",372},
+    {"PA1",253},                // Unknown
+    {"OEMClear",254}            // Unknown
+
+};
