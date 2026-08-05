@@ -26,13 +26,9 @@ CPMAddPackage(
     URI  "gh:zeromq/libzmq#master"
 
     OPTIONS
-        "BUILD_STATIC on"
         "ZMQ_BUILD_TESTS off"
-        "ZEROMQ_LIBRARY libzmq"
-        "WITH_LIBSODIUM off"
-        "ENABLE_CURVE off"
 )
 
-target_link_libraries(autodeafenplus libzmq-static)
+target_link_libraries(autodeafenplus libzmq)
 
 setup_geode_mod(${PROJECT_NAME})
