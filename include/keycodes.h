@@ -306,24 +306,24 @@ const std::unordered_map<std::string, int> LINUX_KEYCODES = {
     {"=",13},
     {",",51}, 
     {"-",12},
-    {".",52},                   // Unknown
+    {".",52},
     {"/",53},
-    {"`",637},                  // Unknown
+    {"`",41},
     {"[",26},
     {"\\",43},
     {"]",27},
-    {"'",222},                  // Unknown
-    {"OEM8",223},               // Unknown
-    {"OEM102",226},             // Unknown
-    {"Process",229},            // Unknown
-    {"Packet",231},             // Unknown
-    {"Attn",246},               // Unknown
-    {"CrSel",247},              // Unknown
-    {"ExSel",248},              // Unknown
-    {"EraseEOF",249},           // Unknown
+    {"'",40},
+    {"OEM8",637},               // Unknown
+    {"OEM102",637},             // Unknown
+    {"Process",637},            // Unknown
+    {"Packet",637},             // Unknown
+    {"Attn",637},               // Unknown
+    {"CrSel",637},              // Unknown
+    {"ExSel",637},              // Unknown
+    {"EraseEOF",637},           // Unknown
     {"Play",207},
     {"Zoom",372},
-    {"PA1",253},                // Unknown
-    {"OEMClear",254}            // Unknown
+    {"PA1",637},                // Unknown
+    {"OEMClear",637}            // Unknown
 
 };
