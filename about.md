@@ -31,7 +31,7 @@ Getting **Autodeafen+** to run on Linux may need some manual configuration. If t
 
 Thank you to **ShmittWaffles**, **LegendoLight**, and **diamondarmorsteve** for helping test this mod and being awesome friends, as well as **lynxdeer** for making the original AutoDeafen mod that inspired this one.
 
-The cppzmq (MIT License), pyzmq (BSD-3-Clause License), and python-evdev (BSD-3-Clause License) libraries were used in this project. All credit for any included code goes to the respective authors. Their licenses can be found in the licenses folder of the linked repository.
+The libzmq (Mozilla Public License 2.0), pyzmq (BSD-3-Clause License), and python-evdev (BSD-3-Clause License) libraries were used in this project. All credit for any included code goes to the respective authors. Their licenses can be found in the licenses folder of the linked repository.
 
 No AI of any sort was used in any way in the planning, creation, or any other aspect of making this mod.
 Stay silly! :3

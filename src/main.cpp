@@ -129,13 +129,13 @@ struct Settings {
 
                     if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
 
-                        // codes.insert(
+                        codes.insert(
 
-                        //     codes.end(),
+                            codes.end(),
 
-                        //     WINDOWS_KEYCODES.at(_i)
+                            LINUX_KEYCODES.at(_i)
 
-                        // );
+                        );
 
                     } else {
 
@@ -530,11 +530,29 @@ $on_mod(Loaded) {
 }
 
 
-const void press_keys(const std::vector<int>* keycodes) {
+const void press_keys(const std::vector<int>* keycodes) { // TODO: profile this function
 
     if (keycodes->size() == 0) { return; }
 
     if (user_platform == 1) { // linux, on main thread as zmq_send is non blocking
+
+        matjson::Value _input_req;
+
+        _input_req["type"] = "input";
+
+        _input_req["keys"] = *keycodes; // for clarity
+
+        zmq_send( // FIXME: remove extra memory allocation here by reusing _input_req
+
+            b_socket,
+
+            _strdup(_input_req.dump(matjson::NO_INDENTATION).c_str()),
+
+            strlen(_input_req.dump(matjson::NO_INDENTATION).c_str()),
+
+            ZMQ_DONTWAIT
+
+        );
 
     } else if (user_platform == 0) { // windows, on main thread as while SendInput is blocking, has very minimal overhead
 

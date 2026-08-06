@@ -14,4 +14,6 @@ Stay silly! :3
 
 ## Acknowledgements
 
-The [cppzmq](https://github.com/zeromq/cppzmq) (MIT License), [pyzmq](https://github.com/zeromq/pyzmq) (BSD-3-Clause License), and [python-evdev](https://github.com/gvalkov/python-evdev) (BSD-3-Clause License) libraries were used in this project. All credit for any included code goes to the respective authors. The licenses for these libraries can be found in the licenses folder of this repository.
+The [libzmq](https://github.com/zeromq/libzmq) (Mozilla Public License 2.0), [pyzmq](https://github.com/zeromq/pyzmq) (BSD-3-Clause License), and [python-evdev](https://github.com/gvalkov/python-evdev) (BSD-3-Clause License) libraries were used in this project. All credit for any included code goes to the respective authors. The licenses for these libraries can be found in the licenses folder of this repository.
+
+A huge thanks goes to lynxdeer for making the original AutoDeafen Geode mod which inspired this one.
