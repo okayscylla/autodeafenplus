@@ -55,17 +55,12 @@
 # include <algorithm>
 
 
+# include <zmq.h>
+
 # include "keycodes.h"
 
 
 using namespace geode::prelude;
-
-
-// sybau windows the dll is right here lmao
-
-HINSTANCE _libzmq = LoadLibraryA(Mod::get()->getResourcesDir().append("libzmq.dll").string().c_str());
-
-# include <zmq.h>
 
 
 struct Settings {
@@ -398,8 +393,6 @@ $on_game(Exiting) {
     zmq_close(b_socket);
 
     zmq_ctx_destroy(b_context);
-
-    FreeLibrary(_libzmq); // not sure if this is necessary
 
 }
 
