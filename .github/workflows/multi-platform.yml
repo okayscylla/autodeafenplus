@@ -29,15 +29,15 @@ jobs:
       - name: Creating binary directory
         shell: bash
         run: |
-          mkdir -p ${{ github.workspace }}/output/merged
-          unzip ${{ steps.build.outputs.output }}/okayscylla.autodeafenplus.geode -d ${{ github.workspace }}/output/merged
-          rm ${{ steps.build.outputs.output }}/okayscylla.autodeafenplus.geode
-          mkdir -p ${{ github.workspace }}/output/merged/binaries/win
-          mv ${{ github.workspace }}/output/resources/libzmq.dll ${{ github.workspace }}/output/merged/binaries/win/
-          zip -r ${{ steps.build.outputs.output }}/okayscylla.autodeafenplus.geode ${{ github.workspace }}/output/merged/*
+          mkdir -p ${{ github.workspace }}\build\merged
+          unzip ${{ github.workspace }}\build\okayscylla.autodeafenplus.geode -d ${{ github.workspace }}\build\merged
+          rm ${{ github.workspace }}\build\okayscylla.autodeafenplus.geode
+          mkdir -p ${{ github.workspace }}\build\merged\binaries\win
+          mv ${{ github.workspace }}\build\merged\resources\libzmq.dll ${{ github.workspace }}\build\merged\binaries\win
+          zip -r ${{ github.workspace }}\build\okayscylla.autodeafenplus.geode ${{ github.workspace }}\build\merged\*
 
       - name: Upload the merged .geode mod file
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ steps.build.outputs.output }}/okayscylla.autodeafenplus.geode
+          path: ${{ github.workspace }}\build\okayscylla.autodeafenplus.geode
           archive: false
