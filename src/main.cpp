@@ -55,12 +55,17 @@
 # include <algorithm>
 
 
-# include <zmq.h>
-
 # include "keycodes.h"
 
 
 using namespace geode::prelude;
+
+
+// sybau windows the dll is right here lmao
+
+HINSTANCE _libzmq = LoadLibraryA(Mod::get()->getResourcesDir().append("libzmq.dll").string().c_str());
+
+# include <zmq.h>
 
 
 struct Settings {
@@ -353,7 +358,7 @@ $on_game(Loaded) {
 
         // startup new bridge
 
-        // std::system("geode/resources/okayscylla.autodeafenplus/bridge"); // FIXME: unsafe system call
+        std::system(Mod::get()->getResourcesDir().append("bridge").string().c_str()); // FIXME: unsafe system call
 
         // reconnect and get ready for input
 
@@ -393,6 +398,8 @@ $on_game(Exiting) {
     zmq_close(b_socket);
 
     zmq_ctx_destroy(b_context);
+
+    FreeLibrary(_libzmq); // not sure if this is necessary
 
 }
 

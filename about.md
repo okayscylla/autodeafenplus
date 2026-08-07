@@ -11,7 +11,7 @@
 ## Roadmap
 
 * **MacOS** support (I do not own a Mac but if someone does and wants to help out the project by testing feel free to contact me)
-* **C++** Linux input bridge rewrite (currently written in **Python**, new bridge would remove need for extra Linux dependencies)
+* **C++** Linux input bridge rewrite (currently written in **Python** as an initial prototype that I was too lazy to replace, new bridge would remove need for extra Linux dependencies)
 * (maybe) Discord **IPC** / **Social SDK** Integration
 
 If you have any issues feel free to reach out to me on Discord (username: okayscylla).
