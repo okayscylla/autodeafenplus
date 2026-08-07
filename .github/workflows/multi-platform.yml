@@ -30,11 +30,11 @@ jobs:
         shell: bash
         run: |
           mkdir -p ${{ github.workspace }}\build\merged
-          unzip ${{ github.workspace }}\build\okayscylla.autodeafenplus.geode -d ${{ github.workspace }}\build\merged
+          unzip D:/a/autodeafenplus/autodeafenplus/build/okayscylla.autodeafenplus.geode -d D:/a/autodeafenplus/autodeafenplus/build/merged
           rm ${{ github.workspace }}\build\okayscylla.autodeafenplus.geode
           mkdir -p ${{ github.workspace }}\build\merged\binaries\win
           mv ${{ github.workspace }}\build\merged\resources\libzmq.dll ${{ github.workspace }}\build\merged\binaries\win
-          zip -r ${{ github.workspace }}\build\okayscylla.autodeafenplus.geode ${{ github.workspace }}\build\merged\*
+          zip -r D:/a/autodeafenplus/autodeafenplus/build/okayscylla.autodeafenplus.geode D:/a/autodeafenplus/autodeafenplus/build/merged/*
 
       - name: Upload the merged .geode mod file
         uses: actions/upload-artifact@v7
