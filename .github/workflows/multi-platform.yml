@@ -29,6 +29,7 @@ jobs:
       - name: Creating binary directory
         shell: bash
         run: |
+          apt install curl zip unzip tar bzip2
           mkdir -p D:/a/autodeafenplus/autodeafenplus/build/merged
           unzip D:/a/autodeafenplus/autodeafenplus/build/okayscylla.autodeafenplus.geode -d D:/a/autodeafenplus/autodeafenplus/build/merged
           rm D:/a/autodeafenplus/autodeafenplus/build/okayscylla.autodeafenplus.geode
