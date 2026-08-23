@@ -357,15 +357,21 @@ $on_game(Loaded) {
 
         geode::log::info("Found bridge path: {}", Mod::get()->getResourcesDir().append("bridge").string().c_str());
 
+        STARTUPINFOA _si;
+        
+        ZeroMemory(&_si, sizeof(_si));
+
+        _si.cb = sizeof(_si);
+
         int success = CreateProcessA(
 
             Mod::get()->getResourcesDir().append("bridge").string().c_str(),
 
             NULL, NULL, NULL,
 
-            false, 0,
+            false, BELOW_NORMAL_PRIORITY_CLASS,
 
-            NULL, NULL, NULL, NULL
+            NULL, NULL, _si, NULL
 
         );
 
