@@ -353,7 +353,9 @@ $on_game(Loaded) {
 
         // startup new bridge
 
-        std::system(Mod::get()->getResourcesDir().append("bridge").string().c_str()); // FIXME: unsafe system call
+        geode::log::info("Found bridge path: {}", Mod::get()->getResourcesDir().append("bridge").string().c_str());
+
+        // std::system(Mod::get()->getResourcesDir().append("bridge").string().c_str()); // FIXME: unsafe system call
 
         // reconnect and get ready for input
 
