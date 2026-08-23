@@ -361,6 +361,14 @@ $on_game(Loaded) {
 
         STARTUPINFOA _si;
 
+        PROCESS_INFORMATION _pi;
+
+        ZeroMemory(&_si, sizeof(_si));
+
+        _si.cb = sizeof(_si);
+
+        ZeroMemory(&_pi, sizeof(_pi));
+
         int success = CreateProcessA(
 
             Mod::get()->getResourcesDir().append("bridge").string().c_str(),
@@ -369,23 +377,23 @@ $on_game(Loaded) {
 
             false, BELOW_NORMAL_PRIORITY_CLASS,
 
-            NULL, NULL, &_si, NULL
+            NULL, NULL, &_si, &_pi
 
         );
 
-        // if (success) {
+        if (success) {
 
-        //     geode::log::info("Successful started new input bridge");
+            geode::log::info("Successful started new input bridge");
 
-        // } else {
+        } else {
 
-        //     geode::log::error("Failed to start new input bridge");
+            geode::log::error("Failed to start new input bridge");
 
-        // }
+        }
 
-        // // reconnect and get ready for input
+        // reconnect and get ready for input
 
-        // zmq_connect(b_socket, "tcp://localhost:6767");
+        zmq_connect(b_socket, "tcp://localhost:6767");
 
     } else {
 
