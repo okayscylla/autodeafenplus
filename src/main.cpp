@@ -39,6 +39,8 @@
 
 # include <winuser.h>
 
+# include <processthreadsapi.h>
+
 
 # include <cstddef>
 
@@ -355,7 +357,27 @@ $on_game(Loaded) {
 
         geode::log::info("Found bridge path: {}", Mod::get()->getResourcesDir().append("bridge").string().c_str());
 
-        // std::system(Mod::get()->getResourcesDir().append("bridge").string().c_str()); // FIXME: unsafe system call
+        int success = CreateProcessA(
+
+            Mod::get()->getResourcesDir().append("bridge").string().c_str(),
+
+            NULL, NULL, NULL,
+
+            false, 0,
+
+            NULL, NULL, NULL, NULL
+
+        );
+
+        if (success) {
+
+            geode::log::info("Successful started new input bridge");
+
+        } else {
+
+            geode::log::error("Failed to start new input bridge");
+
+        }
 
         // reconnect and get ready for input
 
