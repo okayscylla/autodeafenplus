@@ -385,6 +385,8 @@ $on_game(Loaded) {
 
             geode::log::info("Successful started new input bridge");
 
+            geode::log::info("Found input bridge PID: {}", _pi.dwProcessId);
+
         } else {
 
             geode::log::error("Failed to start new input bridge");
