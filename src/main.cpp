@@ -39,6 +39,8 @@
 
 # include <winuser.h>
 
+# include <winbase.h>
+
 # include <processthreadsapi.h>
 
 
@@ -358,7 +360,7 @@ $on_game(Loaded) {
         geode::log::info("Found bridge path: {}", Mod::get()->getResourcesDir().append("bridge").string().c_str());
 
         STARTUPINFOA _si;
-        
+
         ZeroMemory(&_si, sizeof(_si));
 
         _si.cb = sizeof(_si);
@@ -371,7 +373,7 @@ $on_game(Loaded) {
 
             false, BELOW_NORMAL_PRIORITY_CLASS,
 
-            NULL, NULL, _si, NULL
+            NULL, NULL, &_si, NULL
 
         );
 
