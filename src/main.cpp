@@ -41,6 +41,8 @@
 
 # include <winbase.h>
 
+# include <synchapi.h>
+
 # include <processthreadsapi.h>
 
 
@@ -369,6 +371,8 @@ $on_game(Loaded) {
 
         ZeroMemory(&_pi, sizeof(_pi));
 
+        geode::log::info("Attempting to start new input bridge");
+
         int success = CreateProcessA(
 
             Mod::get()->getResourcesDir().append("bridge").string().c_str(),
@@ -383,9 +387,23 @@ $on_game(Loaded) {
 
         if (success) {
 
-            geode::log::info("Successful started new input bridge");
-
             geode::log::info("Found input bridge PID: {}", _pi.dwProcessId);
+
+            DWORD status = WaitForSingleObject(_pi.hProcess, 0);
+
+            if (status == WAIT_OBJECT_0) {
+
+                DWORD _exit_code;
+
+                GetExitCodeProcess(_pi.hProcess, &_exit_code);
+
+                geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
+
+            } else {
+
+                geode::log::info("Input bridge started successful");
+
+            }
 
         } else {
 
