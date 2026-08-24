@@ -31,7 +31,7 @@ CPMAddPackage(
 
 target_link_libraries(autodeafenplus libzmq)
 
-find_package(Python3 REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 add_custom_command(
     TARGET autodeafenplus POST_BUILD
