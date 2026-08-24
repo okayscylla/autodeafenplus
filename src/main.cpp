@@ -416,7 +416,7 @@ $on_game(Loaded) {
 
         if (status != WAIT_OBJECT_0) {
 
-            geode::log::info("Setting executable bit has taken more than 250ms, skipping");
+            geode::log::warn("Setting executable bit has taken more than 250ms, skipping");
 
         } else {
 
