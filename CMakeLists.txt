@@ -37,8 +37,8 @@ add_custom_command(
     TARGET autodeafenplus POST_BUILD
 
     COMMAND python -m ensurepip --upgrade
-    COMMAND python -m pip install -r requirements.txt
-    COMMAND python -m pyinstaller --distpath build/dist --workpath build --specpath build/spec --onefile --optimize 2 --collect-all --hide-console --disable-windowed-traceback src/bridge.py
+    COMMAND python -m pip install -r ../requirements.txt
+    COMMAND python -m pyinstaller --distpath dist --workpath . --specpath spec --onefile --optimize 2 --collect-all --hide-console --disable-windowed-traceback ../src/bridge.py
 )
 
 setup_geode_mod(${PROJECT_NAME})
