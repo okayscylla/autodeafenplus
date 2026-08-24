@@ -18,7 +18,7 @@ If you have any issues feel free to reach out to me on Discord (username: okaysc
 
 ## Known Bugs
 
-* When using a non **US (ANSI) keyboard** layout on Windows, some autodeafen keybinds (including the default deafen keybind in Discord of **Control+Shift+/**) may not work. While a fix for this is in the works, this issue can currently be mitigated by setting a new deafen keybind in Discord to a combination of **(Ctrl | Shift | Alt)** and **(any number or letter)**. From here, **AutoDeafen+** *should* work as long as the ingame mod config has been updated to reflect the new key combo.
+* When using a non **US (ANSI) keyboard** layout on Windows (or sometimes just in general due to a **Discord bug**), some autodeafen keybinds (including the default deafen keybind in Discord of **Control+Shift+/**) may not work. While a fix for this is in the works, this issue can currently be mitigated by setting a new deafen keybind in Discord to a combination of **(Ctrl | Shift | Alt)** and **(any number or letter)**. From here, **AutoDeafen+** *should* work as long as the ingame mod config has been updated to reflect the new key combo.
 
 ## Linux Specific Info
 
