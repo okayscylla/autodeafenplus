@@ -406,11 +406,29 @@ $on_game(Loaded) {
 
             NULL, NULL,
 
-            false, 0,
+            false, CREATE_NO_WINDOW,
 
             NULL, NULL, &_si, &_pi
 
         );
+
+        DWORD status = WaitForSingleObject(_pi.hProcess, 25000);
+
+        if (status != WAIT_OBJECT_0) {
+
+            geode::log::info("Setting executable bit has taken more than 250ms, skipping");
+
+        } else {
+
+            geode::log::info("Executable bit set successfully");
+
+        }
+
+        ZeroMemory(&_si, sizeof(_si));
+
+        _si.cb = sizeof(_si);
+
+        ZeroMemory(&_pi, sizeof(_pi));
 
         geode::log::info("Attempting to start new input bridge");
 
