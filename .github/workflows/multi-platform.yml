@@ -7,31 +7,19 @@ on:
       - "**"
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-        - name: Windows
-          os: windows-latest
-
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
+  build-mod:
+    name: Build main mod (Windows)
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v7
-
-      - name: Setup Python 3.14
-        uses: actions/setup-python@v7
-        with:
-          python-version: 3.14
 
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
           target: ${{ matrix.config.target }}
       
-      - name: Create binary directory
+      - name: Setup binaries directory
         shell: bash
         run: |
           mkdir -p D:/a/autodeafenplus/autodeafenplus/build/merged
@@ -39,14 +27,48 @@ jobs:
           rm D:/a/autodeafenplus/autodeafenplus/build/okayscylla.autodeafenplus.geode
           mkdir -p D:/a/autodeafenplus/autodeafenplus/build/merged/binaries/win
           mv D:/a/autodeafenplus/autodeafenplus/build/merged/resources/okayscylla.autodeafenplus/libzmq.dll D:/a/autodeafenplus/autodeafenplus/build/merged/binaries/win
-      
+
       - name: Compress updated .geode file
         shell: pwsh
         run: |
-          Compress-Archive -Path D:\a\autodeafenplus\autodeafenplus\build\merged\* -DestinationPath D:\a\autodeafenplus\autodeafenplus\build\okayscylla.autodeafenplus.geode
+          Compress-Archive -Path D:\a\autodeafenplus\autodeafenplus\build\merged\* -DestinationPath D:\a\autodeafenplus\autodeafenplus\build\windows.geode
 
-      - name: Upload the merged .geode mod file
+      - name: Upload merged Windows .geode mod file
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ github.workspace }}/build/okayscylla.autodeafenplus.geode
+          path: ${{ github.workspace }}/merged/*.geode
+          archive: false
+
+  build-bridge:
+    name: Build Linux input bridge and upload all built mod files
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download built mod files
+        uses: actions/download-artifact@v8
+        with:
+          path: built
+
+      - name: Build the bridge
+        shell: bash
+        run: |
+          python -m ensurepip --upgrade
+          python -m pip install -r requirements.txt
+          python -m pyinstaller --onefile --collect-all --optimize 2 --strip src/bridge.py
+
+      - name: Add bridge to Windows mod file
+        shell: bash
+        run: |
+          mkdir -p resources/okayscylla.autodeafenplus/
+          mv dist/bridge resources/okayscylla.autodeafenplus/
+          zip -ur built/windows.geode resources
+          mkdir -p merged/windows
+          mv built/windows.geode merged/windows/okayscylla.autodeafenplus.geode
+
+      - name: Upload all .geode mod files
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ github.workspace }}/merged/*/*.geode
           archive: false
