@@ -62,7 +62,7 @@ jobs:
         shell: bash
         run: |
           python3 -m pip install -r requirements.txt
-          python3 -m PyInstaller --onefile --collect-all --optimize 2 --strip src/bridge.py
+          python3 -m PyInstaller --onefile --optimize 2 --strip src/bridge.py
 
       - name: Add bridge to Windows mod file
         shell: bash
