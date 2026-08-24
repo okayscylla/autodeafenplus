@@ -373,45 +373,47 @@ $on_game(Loaded) {
 
         geode::log::info("Attempting to start new input bridge");
 
-        // int success = CreateProcessA(
+        int success = CreateProcessA(
 
-        //     Mod::get()->getResourcesDir().append("bridge").string().c_str(),
+            NULL,
 
-        //     NULL, NULL, NULL,
+            const_cast<char*>(Mod::get()->getResourcesDir().append("bridge").string().c_str()),
 
-        //     false, BELOW_NORMAL_PRIORITY_CLASS,
+            NULL, NULL,
 
-        //     NULL, NULL, &_si, &_pi
+            false, BELOW_NORMAL_PRIORITY_CLASS,
 
-        // );
+            NULL, NULL, &_si, &_pi
 
-        // if (success) {
+        );
 
-        //     geode::log::info("Found input bridge PID: {}", _pi.dwProcessId);
+        if (success) {
 
-        //     DWORD status = WaitForSingleObject(_pi.hProcess, 0);
+            geode::log::info("Found input bridge PID: {}", _pi.dwProcessId);
 
-        //     if (status == WAIT_OBJECT_0) {
+            DWORD status = WaitForSingleObject(_pi.hProcess, 0);
 
-        //         DWORD _exit_code;
+            if (status == WAIT_OBJECT_0) {
 
-        //         GetExitCodeProcess(_pi.hProcess, &_exit_code);
+                DWORD _exit_code;
 
-        //         geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
+                GetExitCodeProcess(_pi.hProcess, &_exit_code);
 
-        //     } else {
+                geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
 
-        //         geode::log::info("Input bridge started successful");
+            } else {
 
-        //     }
+                geode::log::info("Input bridge started successful");
 
-        // } else {
+            }
 
-        //     geode::log::error("Failed to start new input bridge");
+        } else {
 
-        // }
+            geode::log::error("Failed to start new input bridge");
 
-        ShellExecuteA(NULL, NULL, Mod::get()->getResourcesDir().append("bridge").string().c_str(), NULL, NULL, 0);
+        }
+
+        // ShellExecuteA(NULL, NULL, Mod::get()->getResourcesDir().append("bridge").string().c_str(), NULL, NULL, 0);
 
         // reconnect and get ready for input
 
