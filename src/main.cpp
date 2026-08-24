@@ -437,7 +437,7 @@ $on_game(Exiting) {
 
     DWORD status = WaitForSingleObject(_pi.hProcess, 0);
 
-    if (status == WAIT_OBJECT_0) {
+    if ((status == WAIT_OBJECT_0) || !(_pi.dwProcessId)) {
 
         geode::log::warn("Failed to shutdown input bridge (input bridge process has already crashed)");
 
