@@ -415,6 +415,12 @@ $on_game(Loaded) {
 
         zmq_connect(b_socket, "tcp://localhost:6767");
 
+        DWORD _exit_code;
+
+        GetExitCodeProcess(_pi.hProcess, &_exit_code);
+
+        geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
+
     } else {
 
         geode::log::info("Detected Windows environment");
