@@ -373,53 +373,49 @@ $on_game(Loaded) {
 
         geode::log::info("Attempting to start new input bridge");
 
-        int success = CreateProcessA(
+        // int success = CreateProcessA(
 
-            Mod::get()->getResourcesDir().append("bridge").string().c_str(),
+        //     Mod::get()->getResourcesDir().append("bridge").string().c_str(),
 
-            NULL, NULL, NULL,
+        //     NULL, NULL, NULL,
 
-            false, BELOW_NORMAL_PRIORITY_CLASS,
+        //     false, BELOW_NORMAL_PRIORITY_CLASS,
 
-            NULL, NULL, &_si, &_pi
+        //     NULL, NULL, &_si, &_pi
 
-        );
+        // );
 
-        if (success) {
+        // if (success) {
 
-            geode::log::info("Found input bridge PID: {}", _pi.dwProcessId);
+        //     geode::log::info("Found input bridge PID: {}", _pi.dwProcessId);
 
-            DWORD status = WaitForSingleObject(_pi.hProcess, 0);
+        //     DWORD status = WaitForSingleObject(_pi.hProcess, 0);
 
-            if (status == WAIT_OBJECT_0) {
+        //     if (status == WAIT_OBJECT_0) {
 
-                DWORD _exit_code;
+        //         DWORD _exit_code;
 
-                GetExitCodeProcess(_pi.hProcess, &_exit_code);
+        //         GetExitCodeProcess(_pi.hProcess, &_exit_code);
 
-                geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
+        //         geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
 
-            } else {
+        //     } else {
 
-                geode::log::info("Input bridge started successful");
+        //         geode::log::info("Input bridge started successful");
 
-            }
+        //     }
 
-        } else {
+        // } else {
 
-            geode::log::error("Failed to start new input bridge");
+        //     geode::log::error("Failed to start new input bridge");
 
-        }
+        // }
+
+        ShellExecuteA(NULL, NULL, Mod::get()->getResourcesDir().append("bridge").string().c_str(), NULL, NULL, 0);
 
         // reconnect and get ready for input
 
         zmq_connect(b_socket, "tcp://localhost:6767");
-
-        DWORD _exit_code;
-
-        GetExitCodeProcess(_pi.hProcess, &_exit_code);
-
-        geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
 
     } else {
 
