@@ -69,6 +69,7 @@ jobs:
         run: |
           mkdir -p resources/okayscylla.autodeafenplus/
           mv dist/bridge resources/okayscylla.autodeafenplus/
+          chmod +x resources/okayscylla.autodeafenplus/bridge
           zip -ur built/windows.geode resources
           mkdir -p merged/windows
           mv built/windows.geode merged/windows/okayscylla.autodeafenplus.geode
