@@ -72,9 +72,11 @@ jobs:
           zip -ur built/windows.geode resources
           mkdir -p merged/windows
           mv built/windows.geode merged/windows/okayscylla.autodeafenplus.geode
+          mkdir output
+          zip -r output/all-platforms.zip merged/*/*.geode
 
       - name: Upload all .geode mod files
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ github.workspace }}/merged/*/*.geode
+          path: ${{ github.workspace }}/output/all-platforms.zip
           archive: false
