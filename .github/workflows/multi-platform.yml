@@ -25,8 +25,8 @@ jobs:
           mkdir -p D:/a/autodeafenplus/autodeafenplus/build/merged
           unzip D:/a/autodeafenplus/autodeafenplus/build/okayscylla.autodeafenplus.geode -d D:/a/autodeafenplus/autodeafenplus/build/merged
           rm D:/a/autodeafenplus/autodeafenplus/build/okayscylla.autodeafenplus.geode
-          mkdir -p D:/a/autodeafenplus/autodeafenplus/build/merged/binaries/win
-          mv D:/a/autodeafenplus/autodeafenplus/build/merged/resources/okayscylla.autodeafenplus/libzmq.dll D:/a/autodeafenplus/autodeafenplus/build/merged/binaries/win
+          mkdir -p D:/a/autodeafenplus/autodeafenplus/build/merged/resources/okayscylla.autodeafenplus/binaries/win
+          mv D:/a/autodeafenplus/autodeafenplus/build/merged/resources/okayscylla.autodeafenplus/libzmq.dll D:/a/autodeafenplus/autodeafenplus/build/merged/resources/okayscylla.autodeafenplus/binaries/win
 
       - name: Compress updated .geode file
         shell: pwsh
