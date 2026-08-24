@@ -36,7 +36,7 @@ jobs:
       - name: Upload merged Windows .geode mod file
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ github.workspace }}/merged/*.geode
+          path: ${{ github.workspace }}\build\*.geode
           archive: false
 
   build-bridge:
@@ -50,11 +50,15 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: built
+      
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
 
       - name: Build the bridge
         shell: bash
         run: |
-          python -m ensurepip --upgrade
           python -m pip install -r requirements.txt
           python -m pyinstaller --onefile --collect-all --optimize 2 --strip src/bridge.py
 
