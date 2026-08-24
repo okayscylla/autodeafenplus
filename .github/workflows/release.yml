@@ -16,7 +16,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh run download --dir artifacts --name okayscylla.autodeafenplus.geode
+          gh run download --dir artifacts --name all-platforms.zip
       - name: Publish release
         uses: softprops/action-gh-release@v3
         with:
