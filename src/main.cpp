@@ -378,6 +378,30 @@ $on_game(Loaded) {
 
         ZeroMemory(&_pi, sizeof(_pi));
 
+        geode::log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
+
+        geode::log::info("command: {}", std::string("Z:\\usr\\bin\\chmod +x /").append(Mod::get()->getResourcesDir().append("bridge").relative_path().generic_string()).c_str());
+
+        CreateProcessA(
+
+            NULL,
+
+            const_cast<char *>(
+
+                std::string("Z:\\usr\\bin\\chmod +x /").append(
+
+                Mod::get()->getResourcesDir().append("bridge").relative_path().generic_string()).c_str()
+
+            ),
+
+            NULL, NULL,
+
+            false, 0,
+
+            NULL, NULL, &_si, &_pi
+
+        );
+
         geode::log::info("Attempting to start new input bridge");
 
         int success = CreateProcessA(
