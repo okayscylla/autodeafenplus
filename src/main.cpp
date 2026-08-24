@@ -247,6 +247,9 @@ void *b_context = zmq_ctx_new();
 void *b_socket = zmq_socket(b_context, ZMQ_PUSH);
 
 
+PROCESS_INFORMATION _pi;
+
+
 $on_game(Loaded) {
 
     if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
@@ -333,6 +336,10 @@ $on_game(Loaded) {
 
         // shutdown existing bridge if already running
 
+        /*
+
+        TODO: Fix this
+
         void *_s = zmq_socket(b_context, ZMQ_PUSH);
 
         zmq_connect(_s, "tcp://localhost:6767");
@@ -357,13 +364,13 @@ $on_game(Loaded) {
 
         zmq_close(_s);
 
+        */
+
         // startup new bridge
 
         geode::log::info("Found bridge path: {}", Mod::get()->getResourcesDir().append("bridge").string().c_str());
 
         STARTUPINFOA _si;
-
-        PROCESS_INFORMATION _pi;
 
         ZeroMemory(&_si, sizeof(_si));
 
@@ -375,11 +382,9 @@ $on_game(Loaded) {
 
         int success = CreateProcessA(
 
-            NULL,
+            Mod::get()->getResourcesDir().append("bridge").string().c_str(),
 
-            const_cast<char*>(Mod::get()->getResourcesDir().append("bridge").string().c_str()),
-
-            NULL, NULL,
+            NULL, NULL, NULL,
 
             false, BELOW_NORMAL_PRIORITY_CLASS,
 
@@ -413,8 +418,6 @@ $on_game(Loaded) {
 
         }
 
-        // ShellExecuteA(NULL, NULL, Mod::get()->getResourcesDir().append("bridge").string().c_str(), NULL, NULL, 0);
-
         // reconnect and get ready for input
 
         zmq_connect(b_socket, "tcp://localhost:6767");
@@ -432,27 +435,39 @@ $on_game(Loaded) {
 
 $on_game(Exiting) {
 
-    matjson::Value _shutdown_req;
+    DWORD status = WaitForSingleObject(_pi.hProcess, 0);
 
-    _shutdown_req["type"] = "shutdown";
+    if (status == WAIT_OBJECT_0) {
 
-    _shutdown_req["keys"] = std::vector<int>(); // for clarity
+        geode::log::warn("Failed to shutdown input bridge (input bridge process has already crashed)");
 
-    zmq_send(
+    } else {
 
-        b_socket,
+        matjson::Value _shutdown_req;
 
-        _strdup(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
+        _shutdown_req["type"] = "shutdown";
 
-        strlen(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
+        _shutdown_req["keys"] = std::vector<int>(); // for clarity
 
-        ZMQ_DONTWAIT
+        zmq_send(
 
-    );
+            b_socket,
 
-    zmq_close(b_socket);
+            _strdup(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
 
-    zmq_ctx_destroy(b_context);
+            strlen(_shutdown_req.dump(matjson::NO_INDENTATION).c_str()),
+
+            ZMQ_DONTWAIT
+
+        );
+
+        zmq_close(b_socket);
+
+        zmq_ctx_destroy(b_context);
+
+        geode::log::info("Input bridge shutdown successful");
+
+    }
 
 }
 
