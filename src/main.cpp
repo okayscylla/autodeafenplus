@@ -412,7 +412,7 @@ $on_game(Loaded) {
 
         );
 
-        DWORD status = WaitForSingleObject(_pi.hProcess, 25000);
+        DWORD status = WaitForSingleObject(_pi.hProcess, 250);
 
         if (status != WAIT_OBJECT_0) {
 
