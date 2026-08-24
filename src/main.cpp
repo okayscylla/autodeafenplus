@@ -380,6 +380,16 @@ $on_game(Loaded) {
 
         geode::log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
 
+        geode::log::info("command: '{}'", const_cast<char *>(
+
+            std::string("start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
+
+            Mod::get()->getResourcesDir().append("bridge").relative_path().generic_string())
+
+            .append("\"").c_str()
+
+        ));
+
         CreateProcessA(
 
             NULL,
