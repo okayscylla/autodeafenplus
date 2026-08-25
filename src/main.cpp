@@ -1196,7 +1196,7 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
         CCMenuItemSpriteExtra* settings_button = CCMenuItemSpriteExtra::create(
 
-            CCSprite::createWithSpriteFrameName("diffIcon_02_btn_001.png"), 
+            CCSprite::createWithSpriteFrameName("GJ_fxOnBtn_001.png"), 
 
             this, 
 
