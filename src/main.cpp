@@ -43,6 +43,8 @@
 
 # include <synchapi.h>
 
+# include <errhandlingapi.h>
+
 # include <processthreadsapi.h>
 
 
@@ -412,11 +414,11 @@ $on_game(Loaded) {
 
         );
 
-        DWORD status = WaitForSingleObject(_pi.hProcess, 250);
+        DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
 
         if (status != WAIT_OBJECT_0) {
 
-            geode::log::warn("Setting executable bit has taken more than 250ms, skipping");
+            geode::log::warn("Setting executable bit has taken more than 2000ms, skipping");
 
         } else {
 
@@ -466,7 +468,7 @@ $on_game(Loaded) {
 
         } else {
 
-            geode::log::error("Failed to start new input bridge");
+            geode::log::error("Failed to start new input bridge ({})", GetLastError());
 
         }
 
@@ -1203,6 +1205,8 @@ class $modify(ADPPauseLayer, PauseLayer) {
             menu_selector(ADPPauseLayer::onADPSettingsToggle)
 
         );
+
+        settings_button->setScale(0.775f);
 
         menu->addChild(settings_button);
 
