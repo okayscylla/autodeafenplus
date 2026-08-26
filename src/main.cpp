@@ -1206,6 +1206,8 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
         );
 
+        settings_button->setID("adp-settings-toggle");
+
         settings_button->setScale(0.775f);
 
         menu->addChild(settings_button);
