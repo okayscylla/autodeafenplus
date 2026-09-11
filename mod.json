@@ -1,5 +1,5 @@
 {
-	"geode": "5.7.1",
+	"geode": "5.10.1",
 	"gd": {
 		"win": "2.2081"
 	},
@@ -7,7 +7,7 @@
 	"name": "AutoDeafen+",
 	"version": "v1.0.0",
 	"developer": "okayscylla",
-	"description": "Autodeafen for both Linux and Windows",
+	"description": "Better autodeafen for both Linux and Windows",
 	"dependencies": {
 		"geode.node-ids": ">=v1.23.3"
 	},

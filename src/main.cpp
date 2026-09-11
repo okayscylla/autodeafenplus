@@ -370,33 +370,95 @@ $on_game(Loaded) {
 
         // startup new bridge
 
-        geode::log::info("Found bridge path: {}", Mod::get()->getResourcesDir().append("bridge").string().c_str());
+        std::filesystem::path _bp = Mod::get()->getResourcesDir().append("bridge");
+
+        geode::log::info("Found bridge path: {}", _bp.string().c_str());
 
         STARTUPINFOA _si;
 
-        ZeroMemory(&_si, sizeof(_si));
+        if (!_bp.string().starts_with("Z")) { // TODO: make this less of a mess lmao
 
-        _si.cb = sizeof(_si);
+            geode::log::info("Using workaround for Proton versions above 9.0-4");
 
-        ZeroMemory(&_pi, sizeof(_pi));
+            std::vector<std::filesystem::path> common_paths = {
 
-        geode::log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
+                std::filesystem::path("~") / ".local/share/Steam" / _bp.relative_path().generic_string(),
 
-        // geode::log::info("Running command: '{}'", const_cast<char *>(
+                std::filesystem::path("~") / ".steam/steam" / _bp.relative_path().generic_string(),
 
-        //     std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
+                std::filesystem::path("~") / ".var/app/com.valvesoftware.Steam/data/Steam" / _bp.relative_path().generic_string()
 
-        //     Mod::get()->getResourcesDir().append("bridge").relative_path().generic_string())
+            }; // FIXME: only run chmod on files that exist
 
-        //     .append("\"\"").c_str()
+            for (std::filesystem::path _bpr : common_paths) {
 
-        // ));
+                ZeroMemory(&_si, sizeof(_si));
 
-        CreateProcessA(
+                _si.cb = sizeof(_si);
 
-            NULL,
+                ZeroMemory(&_pi, sizeof(_pi));
 
-            const_cast<char *>(
+                geode::log::info("Trying to set Linux executable bit for path {}", _bpr.relative_path().generic_string()); // FIXME: do this only if neccesary and fix race condition
+
+                geode::log::info("Running command: '{}'", const_cast<char *>(
+
+                    std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"").append(
+
+                    _bpr.relative_path().generic_string())
+
+                    .append("\"\"").c_str()
+
+                ));
+
+                CreateProcessA(
+
+                    NULL,
+
+                    const_cast<char *>(
+
+                        std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"").append(
+
+                        _bpr.relative_path().generic_string())
+
+                        .append("\"\"").c_str()
+
+                    ),
+
+                    NULL, NULL,
+
+                    false, CREATE_NO_WINDOW,
+
+                    NULL, NULL, &_si, &_pi
+
+                );
+
+                DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
+
+                if (status != WAIT_OBJECT_0) {
+
+                    geode::log::warn("Setting executable bit has taken more than 2000ms, skipping path");
+
+                } else {
+
+                    geode::log::info("Path executable bit set successfully");
+
+                }
+
+            }
+
+        } else {
+
+            STARTUPINFOA _si;
+
+            ZeroMemory(&_si, sizeof(_si));
+
+            _si.cb = sizeof(_si);
+
+            ZeroMemory(&_pi, sizeof(_pi));
+
+            geode::log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
+
+            geode::log::info("Running command: '{}'", const_cast<char *>(
 
                 std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
@@ -404,25 +466,41 @@ $on_game(Loaded) {
 
                 .append("\"\"").c_str()
 
-            ),
+            ));
 
-            NULL, NULL,
+            CreateProcessA(
 
-            false, CREATE_NO_WINDOW,
+                NULL,
 
-            NULL, NULL, &_si, &_pi
+                const_cast<char *>(
 
-        );
+                    std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
-        DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
+                    _bp.relative_path().generic_string())
 
-        if (status != WAIT_OBJECT_0) {
+                    .append("\"\"").c_str()
 
-            geode::log::warn("Setting executable bit has taken more than 2000ms, skipping");
+                ),
 
-        } else {
+                NULL, NULL,
 
-            geode::log::info("Executable bit set successfully");
+                false, CREATE_NO_WINDOW,
+
+                NULL, NULL, &_si, &_pi
+
+            );
+
+            DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
+
+            if (status != WAIT_OBJECT_0) {
+
+                geode::log::warn("Setting executable bit has taken more than 2000ms, skipping");
+
+            } else {
+
+                geode::log::info("Executable bit set successfully");
+
+            }
 
         }
 
@@ -436,7 +514,7 @@ $on_game(Loaded) {
 
         int success = CreateProcessA(
 
-            Mod::get()->getResourcesDir().append("bridge").string().c_str(),
+            _bp.string().c_str(),
 
             NULL, NULL, NULL,
 
@@ -1125,7 +1203,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         PlayLayer::pauseGame(unfocused);
 
-        if (settings.enable && current_level.enable && settings.pause_toggle && active) {
+        if (settings.enable && current_level.enable && settings.pause_toggle && (!m_isTestMode || (settings.startpos && m_isTestMode)) && active) {
 
             active = false;
 
