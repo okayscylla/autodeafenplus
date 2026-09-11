@@ -36,7 +36,9 @@ while True:
 
                 for key in message["keys"]:
                     input_handle.write(evdev.ecodes.EV_KEY, int(key), 0)
-                
+
+                input_handle.syn()
+
                 print("Request succeeded!")
             else:
                 print("Request failed!")
