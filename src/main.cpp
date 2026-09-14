@@ -4,6 +4,8 @@
 
 # include <Geode/utils/async.hpp>
 
+# include <Geode/utils/string.hpp>
+
 # include <Geode/utils/Keyboard.hpp>
 
 # include <Geode/modify/Modify.hpp>
@@ -462,7 +464,7 @@ $on_game(Loaded) {
 
                 std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
-                Mod::get()->getResourcesDir().append("bridge").relative_path().generic_string())
+                string::replace(_bp.relative_path().generic_string(), " ", "\\ "))
 
                 .append("\"\"").c_str()
 
@@ -476,7 +478,7 @@ $on_game(Loaded) {
 
                     std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
-                    _bp.relative_path().generic_string())
+                    string::replace(_bp.relative_path().generic_string(), " ", "\\ "))
 
                     .append("\"\"").c_str()
 
