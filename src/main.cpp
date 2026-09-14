@@ -402,11 +402,11 @@ $on_game(Loaded) {
 
                 geode::log::info("Running command: '{}'", const_cast<char *>(
 
-                    std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"").append(
+                    std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x \"").append(
 
                     _bpr.relative_path().generic_string())
 
-                    .append("\"\"").c_str()
+                    .append("\"\"\"").c_str()
 
                 ));
 
@@ -416,11 +416,11 @@ $on_game(Loaded) {
 
                     const_cast<char *>(
 
-                        std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"").append(
+                        std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x \"").append(
 
                         _bpr.relative_path().generic_string())
 
-                        .append("\"\"").c_str()
+                        .append("\"\"\"").c_str()
 
                     ),
 
@@ -569,7 +569,7 @@ $on_game(Exiting) {
 
     DWORD status = WaitForSingleObject(_pi.hProcess, 0);
 
-    if ((status == WAIT_OBJECT_0) || !(_pi.dwProcessId)) {
+    if ((status == WAIT_OBJECT_0) || !(_pi.dwProcessId) || (_pi.dwProcessId == 0)) {
 
         geode::log::warn("Failed to shutdown input bridge (input bridge process has already crashed)");
 
