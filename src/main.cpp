@@ -394,31 +394,19 @@ $on_game(Loaded) {
 
             for (std::filesystem::path _bpr : common_paths) {
 
-                std::string _bpr_r = _bpr.relative_path().generic_string();
-
-                size_t _pos = _bpr_r.find(std::string(" "));
-
-                while (_pos != std::string::npos) {
-
-                    _bpr_r.replace(_pos, std::string(" ").size(), std::string("\\ "));
-
-                    _pos = _bpr_r.find(std::string(" ", _pos + std::string(" ").size()));
-
-                }
-
                 ZeroMemory(&_si, sizeof(_si));
 
                 _si.cb = sizeof(_si);
 
                 ZeroMemory(&_pi, sizeof(_pi));
 
-                geode::log::info("Trying to set Linux executable bit for path {}", _bpr_r); // FIXME: do this only if neccesary and fix race condition
+                geode::log::info("Trying to set Linux executable bit for path {}", _bpr); // FIXME: do this only if neccesary and fix race condition
 
                 geode::log::info("Running command: '{}'", const_cast<char *>(
 
                     std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x ").append(
 
-                    _bpr_r)
+                    string::replace(_bpr.relative_path().generic_string(), " ", "\\ "))
 
                     .append("\"\"").c_str()
 
@@ -432,7 +420,7 @@ $on_game(Loaded) {
 
                         std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x ").append(
 
-                        _bpr_r)
+                        string::replace(_bpr.relative_path().generic_string(), " ", "\\ "))
 
                         .append("\"\"").c_str()
 
@@ -476,7 +464,7 @@ $on_game(Loaded) {
 
                 std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
-                string::replace(_bp.relative_path().generic_string(), " ", "\\ "))
+                _bp.relative_path().generic_string())
 
                 .append("\"\"").c_str()
 
@@ -490,7 +478,7 @@ $on_game(Loaded) {
 
                     std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
-                    string::replace(_bp.relative_path().generic_string(), " ", "\\ "))
+                    _bp.relative_path().generic_string())
 
                     .append("\"\"").c_str()
 
