@@ -11,7 +11,7 @@
 ## Roadmap
 
 * **MacOS** support (I do not own a Mac but if someone does and wants to help out the project by testing feel free to contact me)
-* **C++** Linux input bridge rewrite (currently written in **Python** as an initial prototype that I was too lazy to replace, new bridge would remove need for extra Linux dependencies)
+* **C++** Linux input bridge rewrite (currently written in **Python** as an initial prototype that I was too lazy to replace)
 * (maybe) Discord **IPC** / **Social SDK** Integration
 
 If you have any issues feel free to reach out to me on Discord (username: okayscylla).
@@ -25,7 +25,7 @@ If you have any issues feel free to reach out to me on Discord (username: okaysc
 Getting **Autodeafen+** to run on Linux may need some manual configuration. If the mod is not working properly on Linux, try the following things:
 
 * ensure the user running Geometry Dash is part of the **input** group (run **"sudo usermod -a -G input $USER"** in your terminal application)
-* **(REQUIRED FOR WAYLAND SESSIONS)** setup global hotkeys in your compositor for your Discord deafen keybind
+* **(REQUIRED FOR WAYLAND SESSIONS)** setup global hotkeys in your compositor for your Discord deafen keybind (NOTE: If you are on KDE Plasma this should work out of the box)
 
 ## Acknowledgements
 
