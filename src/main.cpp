@@ -402,7 +402,7 @@ $on_game(Loaded) {
 
                     _bpr_r.replace(_pos, std::string(" ").size(), std::string("\\ "));
 
-                    _pos = _bpr_r.find(std::string(" ", _pos + std::string(" ").size());
+                    _pos = _bpr_r.find(std::string(" ", _pos + std::string(" ").size()));
 
                 }
 
