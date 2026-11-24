@@ -479,7 +479,7 @@ $on_game(Loaded) {
                     std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
                     _bp.relative_path().generic_string())
-
+g
                     .append("\"\"").c_str()
 
                 ),
