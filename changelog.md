@@ -1,3 +1,9 @@
+# v1.0.2
+
+* Updated AutoDeafen+ to support Geode v6.0.0 and Geometry Dash 2.2091
+
+* Added more :3ness
+
 # v1.0.1
 
 * Fixed a bug involving deafen toggling incorrectly when in a StartPos if 'Undeafen on Pause' was enabled
