@@ -1278,11 +1278,15 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
         PauseLayer::customSetup();
 
-        CCNode* menu = this->getChildByID("right-button-menu");
+        CCNode* menu = this->getChildByID("main-layer")->getChildByID("right-button-menu");
 
         CCMenuItemSpriteExtra* settings_button = CCMenuItemSpriteExtra::create(
 
-            CCSprite::createWithSpriteFrameName("GJ_fxOnBtn_001.png"), 
+            CircleButtonSprite::createWithSpriteFrameName(
+
+                "GJ_sSFXIcon_001.png"
+
+            ),
 
             this, 
 
