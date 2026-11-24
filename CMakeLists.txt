@@ -6,7 +6,7 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64")
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CPPZMQ_BUILD_TESTS false)
 
-project(autodeafenplus VERSION 1.0.0)
+project(autodeafenplus VERSION 1.0.2)
 
 include_directories(include)
 
@@ -27,6 +27,9 @@ CPMAddPackage(
 
     OPTIONS
         "ZMQ_BUILD_TESTS off"
+        "WITH_LIBBSD off"
+        "RT_LIBRARY off"
+        "LIBBSD_FOUND off"
 )
 
 target_link_libraries(autodeafenplus libzmq)
