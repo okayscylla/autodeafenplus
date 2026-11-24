@@ -161,13 +161,13 @@ struct Settings {
 
                 } catch (std::out_of_range) {
 
-                    geode::log::error("Failed to find keycode for key \"{}\"", _i);
+                    log::error("Failed to find keycode for key \"{}\"", _i);
 
                 }
 
             }
 
-            geode::log::info("Found discord keybind: {}", codes);
+            log::info("Found discord keybind: {}", codes);
 
             return codes;
 
@@ -258,7 +258,7 @@ $on_game(Loaded) {
 
     if ((void *)GetProcAddress(GetModuleHandle("ntdll.dll"), "wine_get_host_version")) {
 
-        geode::log::info("Detected Linux (wine) environment");
+        log::info("Detected Linux (wine) environment");
 
         user_platform = 1;
 
@@ -306,15 +306,15 @@ $on_game(Loaded) {
 
         delete[] pathext;
 
-        geode::log::info("Found PATHEXT: {}", _str);
+        log::info("Found PATHEXT: {}", _str);
 
         if (_str.contains(";.;") || _str.ends_with(";.")) {
 
-            geode::log::info("PATHEXT already configured");
+            log::info("PATHEXT already configured");
 
         } else {
 
-            geode::log::info("PATHEXT not configured, updating");
+            log::info("PATHEXT not configured, updating");
 
             _str.append(";.");
 
@@ -374,13 +374,13 @@ $on_game(Loaded) {
 
         std::filesystem::path _bp = Mod::get()->getResourcesDir().append("bridge");
 
-        geode::log::info("Found bridge path: {}", _bp.string().c_str());
+        log::info("Found bridge path: {}", _bp.string().c_str());
 
         STARTUPINFOA _si;
 
         if (!_bp.string().starts_with("Z")) { // TODO: make this less of a mess lmao
 
-            geode::log::info("Using workaround for Proton versions above 9.0-4");
+            log::info("Using workaround for Proton versions above 9.0-4");
 
             std::vector<std::filesystem::path> common_paths = {
 
@@ -400,9 +400,9 @@ $on_game(Loaded) {
 
                 ZeroMemory(&_pi, sizeof(_pi));
 
-                geode::log::info("Trying to set Linux executable bit for path {}", _bpr); // FIXME: do this only if neccesary and fix race condition
+                log::info("Trying to set Linux executable bit for path {}", _bpr); // FIXME: do this only if neccesary and fix race condition
 
-                geode::log::info("Running command: '{}'", const_cast<char *>(
+                log::info("Running command: '{}'", const_cast<char *>(
 
                     std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x ").append(
 
@@ -438,11 +438,11 @@ $on_game(Loaded) {
 
                 if (status != WAIT_OBJECT_0) {
 
-                    geode::log::warn("Setting executable bit has taken more than 2000ms, skipping path");
+                    log::warn("Setting executable bit has taken more than 2000ms, skipping path");
 
                 } else {
 
-                    geode::log::info("Path executable bit set successfully");
+                    log::info("Path executable bit set successfully");
 
                 }
 
@@ -458,9 +458,9 @@ $on_game(Loaded) {
 
             ZeroMemory(&_pi, sizeof(_pi));
 
-            geode::log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
+            log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
 
-            geode::log::info("Running command: '{}'", const_cast<char *>(
+            log::info("Running command: '{}'", const_cast<char *>(
 
                 std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
@@ -496,11 +496,11 @@ g
 
             if (status != WAIT_OBJECT_0) {
 
-                geode::log::warn("Setting executable bit has taken more than 2000ms, skipping");
+                log::warn("Setting executable bit has taken more than 2000ms, skipping");
 
             } else {
 
-                geode::log::info("Executable bit set successfully");
+                log::info("Executable bit set successfully");
 
             }
 
@@ -512,7 +512,7 @@ g
 
         ZeroMemory(&_pi, sizeof(_pi));
 
-        geode::log::info("Attempting to start new input bridge");
+        log::info("Attempting to start new input bridge");
 
         int success = CreateProcessA(
 
@@ -528,7 +528,7 @@ g
 
         if (success) {
 
-            geode::log::info("Found input bridge PID: {}", _pi.dwProcessId);
+            log::info("Found input bridge PID: {}", _pi.dwProcessId);
 
             DWORD status = WaitForSingleObject(_pi.hProcess, 0);
 
@@ -538,17 +538,17 @@ g
 
                 GetExitCodeProcess(_pi.hProcess, &_exit_code);
 
-                geode::log::error("Input bridge crashed on startup with exit code {}", _exit_code);
+                log::error("Input bridge crashed on startup with exit code {}", _exit_code);
 
             } else {
 
-                geode::log::info("Input bridge started successful");
+                log::info("Input bridge started successful");
 
             }
 
         } else {
 
-            geode::log::error("Failed to start new input bridge ({})", GetLastError());
+            log::error("Failed to start new input bridge ({})", GetLastError());
 
         }
 
@@ -558,7 +558,7 @@ g
 
     } else {
 
-        geode::log::info("Detected Windows environment");
+        log::info("Detected Windows environment");
 
         user_platform = 0;
 
@@ -573,7 +573,7 @@ $on_game(Exiting) {
 
     if ((status == WAIT_OBJECT_0) || (!(_pi.dwProcessId) && (_pi.dwProcessId != 0))) {
 
-        geode::log::warn("Failed to shutdown input bridge (input bridge process has already crashed)");
+        log::warn("Failed to shutdown input bridge (input bridge process has already crashed)");
 
     } else {
 
@@ -599,7 +599,7 @@ $on_game(Exiting) {
 
         zmq_ctx_destroy(b_context);
 
-        geode::log::info("Input bridge shutdown successful");
+        log::info("Input bridge shutdown successful");
 
     }
 
@@ -716,13 +716,13 @@ $on_mod(Loaded) {
 
                         default:
 
-                            geode::log::error("No keycode table for platform {}", user_platform);
+                            log::error("No keycode table for platform {}", user_platform);
 
                     }
 
                 } catch (std::out_of_range) {
 
-                    geode::log::error("Failed to find keycode for key \"{}\"", _i);
+                    log::error("Failed to find keycode for key \"{}\"", _i);
 
                 }
 
@@ -730,7 +730,7 @@ $on_mod(Loaded) {
 
             settings.discord_keybind = codes;
 
-            geode::log::info("Updated discord keybind: {}", codes);
+            log::info("Updated discord keybind: {}", codes);
 
         }
 
@@ -793,7 +793,7 @@ const void press_keys(const std::vector<int>* keycodes) { // TODO: profile this 
 
     } else { // something has gone terribly wrong
 
-        geode::log::info("Invalid platform: {}", user_platform);
+        log::info("Invalid platform: {}", user_platform);
 
     }
 
@@ -1024,7 +1024,7 @@ class ADPSettingsLayer : public geode::Popup {
 
         Mod::get()->setSavedValue<LevelConfig>(std::to_string(level_id), current_level);
 
-        geode::log::info("Data saved!");
+        log::info("Data saved!");
 
         Popup::onClose(obj);
 
@@ -1069,9 +1069,9 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
     };
 
-    bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
+    bool init(GJGameLevel* level, bool useReplay) {
 
-        if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
+        if (!PlayLayer::init(level, useReplay)) return false;
 
         if (active) {
 
@@ -1079,13 +1079,13 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             press_keys(&settings.discord_keybind);
 
-            geode::log::info("Disabled auto deafen");
+            log::info("Disabled auto deafen");
 
         }
 
         level_id = m_level->m_levelID;
 
-        geode::log::info("Loading config for level {}", level_id);
+        log::info("Loading config for level {}", level_id);
 
         current_level = Mod::get()->getSavedValue<LevelConfig>(
 
@@ -1095,7 +1095,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         );
 
-        geode::log::info(
+        log::info(
 
             "Found config: e -> {}, d% -> {}, u% -> {}",
 
@@ -1147,7 +1147,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 press_keys(&settings.discord_keybind);
 
-                geode::log::info("Disabled auto deafen (player died)");
+                log::info("Disabled auto deafen (player died)");
 
             }
 
@@ -1165,7 +1165,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             press_keys(&settings.discord_keybind);
 
-            geode::log::info("Disabled auto deafen (before deafen percent)");
+            log::info("Disabled auto deafen (before deafen percent)");
 
             return;
 
@@ -1185,7 +1185,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 press_keys(&settings.discord_keybind);
 
-                geode::log::info("Disabled auto deafen (passed undeafen percent)");
+                log::info("Disabled auto deafen (passed undeafen percent)");
 
                 return;
 
@@ -1195,7 +1195,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             press_keys(&settings.discord_keybind);
 
-            geode::log::info("Enabled auto deafen (past deafen percent)");
+            log::info("Enabled auto deafen (past deafen percent)");
 
         }
 
@@ -1211,7 +1211,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             press_keys(&settings.discord_keybind);
 
-            geode::log::info("Disabled auto deafen (paused)");
+            log::info("Disabled auto deafen (paused)");
 
         }
 
@@ -1233,7 +1233,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
                 press_keys(&settings.discord_keybind);
 
-                geode::log::info("Disabled auto deafen (past undeafen percentage)");
+                log::info("Disabled auto deafen (past undeafen percentage)");
 
                 return;
 
@@ -1243,7 +1243,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
             press_keys(&settings.discord_keybind);
 
-            geode::log::info("Enabled auto deafen (unpaused)");
+            log::info("Enabled auto deafen (unpaused)");
 
         }
 
@@ -1259,7 +1259,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         press_keys(&settings.discord_keybind);
 
-        geode::log::info("Disabled auto deafen (end animation)");
+        log::info("Disabled auto deafen (end animation)");
 
         m_fields->m_flagIgnoreUpdates = true;
 
@@ -1298,7 +1298,7 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
     void onADPSettingsToggle(CCObject* sendor) {
 
-        geode::log::info("Opening settings menu");
+        log::info("Opening settings menu");
 
         ADPSettingsLayer* settings = ADPSettingsLayer::create();
 
