@@ -30,6 +30,8 @@
 
 # include <matjson.hpp>
 
+# include <asp/fs.hpp>
+
 
 # include <windows.h>
 
@@ -372,7 +374,7 @@ $on_game(Loaded) {
 
         // startup new bridge
 
-        std::filesystem::path _bp = Mod::get()->getResourcesDir().append("bridge");
+        asp::fs::Path _bp = Mod::get()->getResourcesDir() / "bridge";
 
         log::info("Found bridge path: {}", _bp.string().c_str());
 
@@ -382,127 +384,127 @@ $on_game(Loaded) {
 
             log::info("Using workaround for Proton versions above 9.0-4");
 
-            std::vector<std::filesystem::path> common_paths = {
+            // std::vector<std::filesystem::path> common_paths = {
 
-                std::filesystem::path("~") / ".local/share/Steam" / _bp.relative_path().generic_string(),
+            //     asp::fs::Path("~") / ".local/share/Steam" / _bp.nativeResult(),
 
-                std::filesystem::path("~") / ".steam/steam" / _bp.relative_path().generic_string(),
+            //     asp::fs::Path("~") / ".steam/steam" / _bp.nativeResult(),
 
-                std::filesystem::path("~") / ".var/app/com.valvesoftware.Steam/data/Steam" / _bp.relative_path().generic_string()
+            //     asp::fs::Path("~") / ".var/app/com.valvesoftware.Steam/data/Steam" / _bp.nativeResult()
 
-            }; // FIXME: only run chmod on files that exist
+            // }; // FIXME: only run chmod on files that exist
 
-            for (std::filesystem::path _bpr : common_paths) {
+            // for (std::filesystem::path _bpr : common_paths) {
 
-                ZeroMemory(&_si, sizeof(_si));
+            //     ZeroMemory(&_si, sizeof(_si));
 
-                _si.cb = sizeof(_si);
+            //     _si.cb = sizeof(_si);
 
-                ZeroMemory(&_pi, sizeof(_pi));
+            //     ZeroMemory(&_pi, sizeof(_pi));
 
-                log::info("Trying to set Linux executable bit for path {}", _bpr); // FIXME: do this only if neccesary and fix race condition
+            //     log::info("Trying to set Linux executable bit for path {}", _bpr); // FIXME: do this only if neccesary and fix race condition
 
-                log::info("Running command: '{}'", const_cast<char *>(
+            //     log::info("Running command: '{}'", const_cast<char *>(
 
-                    std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x ").append(
+            //         std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x ").append(
 
-                    string::replace(_bpr.relative_path().generic_string(), " ", "\\ "))
+            //         string::replace(_bpr.relative_path().generic_string(), " ", "\\ "))
 
-                    .append("\"\"").c_str()
+            //         .append("\"\"").c_str()
 
-                ));
+            //     ));
 
-                CreateProcessA(
+            //     CreateProcessA(
 
-                    NULL,
+            //         NULL,
 
-                    const_cast<char *>(
+            //         const_cast<char *>(
 
-                        std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x ").append(
+            //             std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\sh\" \"-c\" \"chmod +x ").append(
 
-                        string::replace(_bpr.relative_path().generic_string(), " ", "\\ "))
+            //             string::replace(_bpr.relative_path().generic_string(), " ", "\\ "))
 
-                        .append("\"\"").c_str()
+            //             .append("\"\"").c_str()
 
-                    ),
+            //         ),
 
-                    NULL, NULL,
+            //         NULL, NULL,
 
-                    false, CREATE_NO_WINDOW,
+            //         false, CREATE_NO_WINDOW,
 
-                    NULL, NULL, &_si, &_pi
+            //         NULL, NULL, &_si, &_pi
 
-                );
+            //     );
 
-                DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
+            //     DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
 
-                if (status != WAIT_OBJECT_0) {
+            //     if (status != WAIT_OBJECT_0) {
 
-                    log::warn("Setting executable bit has taken more than 2000ms, skipping path");
+            //         log::warn("Setting executable bit has taken more than 2000ms, skipping path");
 
-                } else {
+            //     } else {
 
-                    log::info("Path executable bit set successfully");
+            //         log::info("Path executable bit set successfully");
 
-                }
+            //     }
 
-            }
+            // }
 
         } else {
 
-            STARTUPINFOA _si;
+//             STARTUPINFOA _si;
 
-            ZeroMemory(&_si, sizeof(_si));
+//             ZeroMemory(&_si, sizeof(_si));
 
-            _si.cb = sizeof(_si);
+//             _si.cb = sizeof(_si);
 
-            ZeroMemory(&_pi, sizeof(_pi));
+//             ZeroMemory(&_pi, sizeof(_pi));
 
-            log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
+//             log::info("Setting Linux executable bit"); // FIXME: do this only if neccesary and fix race condition
 
-            log::info("Running command: '{}'", const_cast<char *>(
+//             log::info("Running command: '{}'", const_cast<char *>(
 
-                std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
+//                 std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
-                _bp.relative_path().generic_string())
+//                 _bp.relative_path().generic_string())
 
-                .append("\"\"").c_str()
+//                 .append("\"\"").c_str()
 
-            ));
+//             ));
 
-            CreateProcessA(
+//             CreateProcessA(
 
-                NULL,
+//                 NULL,
 
-                const_cast<char *>(
+//                 const_cast<char *>(
 
-                    std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
+//                     std::string("cmd /c \"start \"\" \"Z:\\usr\\bin\\chmod\" \"+x\" \"/").append(
 
-                    _bp.relative_path().generic_string())
-g
-                    .append("\"\"").c_str()
+//                     _bp.relative_path().generic_string())
+// g
+//                     .append("\"\"").c_str()
 
-                ),
+//                 ),
 
-                NULL, NULL,
+//                 NULL, NULL,
 
-                false, CREATE_NO_WINDOW,
+//                 false, CREATE_NO_WINDOW,
 
-                NULL, NULL, &_si, &_pi
+//                 NULL, NULL, &_si, &_pi
 
-            );
+//             );
 
-            DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
+//             DWORD status = WaitForSingleObject(_pi.hProcess, 2000);
 
-            if (status != WAIT_OBJECT_0) {
+//             if (status != WAIT_OBJECT_0) {
 
-                log::warn("Setting executable bit has taken more than 2000ms, skipping");
+//                 log::warn("Setting executable bit has taken more than 2000ms, skipping");
 
-            } else {
+//             } else {
 
-                log::info("Executable bit set successfully");
+//                 log::info("Executable bit set successfully");
 
-            }
+//             }
 
         }
 
@@ -950,7 +952,7 @@ class ADPSettingsLayer : public geode::Popup {
 
             row3->setOpacity(67);
 
-            undeafen_input->setCallbackEnabled(false);
+            // undeafen_input->setCallbackEnabled(false);
 
             undeafen_input->setEnabled(false);
 
