@@ -1,3 +1,9 @@
+# v1.1.0
+
+* Added support for non-integer percentage values
+
+* Added more :3ness
+
 # v1.0.2
 
 * Updated AutoDeafen+ to support Geode v6.0.0 and Geometry Dash 2.2091

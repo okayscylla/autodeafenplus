@@ -89,15 +89,15 @@ struct Settings {
 
     bool practise;
 
-    int deafen_percentage;
+    float deafen_percentage;
 
-    int undeafen_percentage;
+    float undeafen_percentage;
 
     std::vector<int> discord_keybind;
 
     Settings (
 
-        bool _e, bool _u, bool _pt, bool _s, bool _ps, int _d, int _up, std::vector<int> _k
+        bool _e, bool _u, bool _pt, bool _s, bool _ps, float _d, float _up, std::vector<int> _k
 
     ) :
 
@@ -119,9 +119,9 @@ struct Settings {
 
         practise(Mod::get()->getSettingValue<bool>("practise")),
 
-        deafen_percentage(Mod::get()->getSettingValue<int>("deafen_percentage")),
+        deafen_percentage(Mod::get()->getSettingValue<float>("deafen_percentage")),
 
-        undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage")),
+        undeafen_percentage(Mod::get()->getSettingValue<float>("undeafen_percentage")),
 
         discord_keybind([]() -> std::vector<int> {
 
@@ -186,21 +186,21 @@ struct LevelConfig {
 
     bool enable;
 
-    int deafen_percentage;
+    float deafen_percentage;
 
-    int undeafen_percentage;
+    float undeafen_percentage;
 
     LevelConfig() :
 
         enable(false),
 
-        deafen_percentage(Mod::get()->getSettingValue<int>("deafen_percentage")),
+        deafen_percentage(Mod::get()->getSettingValue<float>("deafen_percentage")),
 
-        undeafen_percentage(Mod::get()->getSettingValue<int>("undeafen_percentage"))
+        undeafen_percentage(Mod::get()->getSettingValue<float>("undeafen_percentage"))
 
     {}
 
-    LevelConfig(bool _e, int _d, int _u) : enable(_e), deafen_percentage(_d), undeafen_percentage(_u) {}
+    LevelConfig(bool _e, float _d, float _u) : enable(_e), deafen_percentage(_d), undeafen_percentage(_u) {}
 
 };
 
@@ -213,9 +213,9 @@ struct matjson::Serialize<LevelConfig> {
 
         GEODE_UNWRAP_INTO(bool _e, value["_e"].asBool());
 
-        GEODE_UNWRAP_INTO(int _d, value["_d"].asInt());
+        GEODE_UNWRAP_INTO(float _d, value["_d"].asFloat());
 
-        GEODE_UNWRAP_INTO(int _u, value["_u"].asInt());
+        GEODE_UNWRAP_INTO(float _u, value["_u"].asFloat());
 
         return Ok(LevelConfig(_e, _d, _u));
 
@@ -632,7 +632,7 @@ $on_mod(Loaded) {
 
         "pause_toggle",
 
-        [](int value) { settings.pause_toggle = value; }
+        [](bool value) { settings.pause_toggle = value; }
 
     );
 
@@ -640,7 +640,7 @@ $on_mod(Loaded) {
 
         "startpos",
 
-        [](int value) { settings.startpos = value; }
+        [](bool value) { settings.startpos = value; }
 
     );
 
@@ -648,23 +648,23 @@ $on_mod(Loaded) {
 
         "practise",
 
-        [](int value) { settings.practise = value; }
+        [](bool value) { settings.practise = value; }
 
     );
 
-    listenForSettingChanges<int>(
+    listenForSettingChanges<float>(
 
         "deafen_percentage",
 
-        [](int value) { settings.deafen_percentage = value; }
+        [](float value) { settings.deafen_percentage = value; }
 
     );
 
-    listenForSettingChanges<int>(
+    listenForSettingChanges<float>(
 
         "undeafen_percentage",
 
-        [](int value) { settings.undeafen_percentage = value; }
+        [](float value) { settings.undeafen_percentage = value; }
 
     );
 
@@ -890,15 +890,17 @@ class ADPSettingsLayer : public geode::Popup {
 
         TextInput* deafen_input = TextInput::create(
 
-            40.f,
+            80.f,
 
-            std::to_string(current_level.deafen_percentage)
+            std::format("{:.3f}", current_level.deafen_percentage)
 
         );
 
-        deafen_input->setCommonFilter(CommonFilter::Int);
+        deafen_input->setNumericMode(true);
 
-        deafen_input->setMaxCharCount(2);
+        deafen_input->setCommonFilter(CommonFilter::UFloat);
+
+        deafen_input->setMaxCharCount(5);
 
         deafen_input->setAnchorPoint(ccp(1.f,0.5f));
 
@@ -930,15 +932,17 @@ class ADPSettingsLayer : public geode::Popup {
 
         TextInput* undeafen_input = TextInput::create(
 
-            40.f,
+            80.f,
 
-            std::to_string(current_level.undeafen_percentage)
+            std::format("{:.3f}", current_level.undeafen_percentage)
 
         );
 
-        undeafen_input->setCommonFilter(CommonFilter::Int);
+        undeafen_input->setNumericMode(true);
 
-        undeafen_input->setMaxCharCount(2);
+        undeafen_input->setCommonFilter(CommonFilter::UFloat);
+
+        undeafen_input->setMaxCharCount(5);
 
         undeafen_input->setAnchorPoint(ccp(1.f,0.5f));
 
@@ -1002,7 +1006,7 @@ class ADPSettingsLayer : public geode::Popup {
 
     void onClose(CCObject* obj) override {
 
-        std::optional<int> _dp = geode::utils::numFromString<int>(
+        std::optional<float> _dp = geode::utils::numFromString<float>(
 
             ((TextInput*)(m_mainLayer->getChildByIDRecursive("deafen-input")))->getString()
 
@@ -1010,11 +1014,11 @@ class ADPSettingsLayer : public geode::Popup {
 
         if (_dp.has_value()) {
 
-            current_level.deafen_percentage = _dp.value();
+            current_level.deafen_percentage = std::clamp(_dp.value(), 0.0f, 99.9f);
 
         }
 
-        std::optional<int> _up = geode::utils::numFromString<int>(
+        std::optional<float> _up = geode::utils::numFromString<float>(
 
             ((TextInput*)(m_mainLayer->getChildByIDRecursive("undeafen-input")))->getString()
 
@@ -1022,7 +1026,7 @@ class ADPSettingsLayer : public geode::Popup {
 
         if (_up.has_value()) {
 
-            current_level.undeafen_percentage = _up.value();
+            current_level.undeafen_percentage = std::clamp(_up.value(), 0.0f, 99.9f);
 
         }
 
@@ -1161,7 +1165,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         if (m_fields->m_flagIgnoreUpdates) { return; }
 
-        int current_percentage = PlayLayer::getCurrentPercentInt();
+        float current_percentage = PlayLayer::getCurrentPercent();
 
         if (active && (current_percentage < current_level.deafen_percentage)) {
 
@@ -1227,7 +1231,7 @@ class $modify(ADPPlayLayer, PlayLayer) {
 
         if (!settings.enable || !current_level.enable || !settings.pause_toggle || active || (!active && settings.undeafen)) { return; }
 
-        int current_percentage = PlayLayer::getCurrentPercentInt();
+        float current_percentage = PlayLayer::getCurrentPercent();
 
         if (current_percentage > current_level.deafen_percentage) {
 
@@ -1288,7 +1292,7 @@ class $modify(ADPPauseLayer, PauseLayer) {
 
             ),
 
-            this, 
+            this,
 
             menu_selector(ADPPauseLayer::onADPSettingsToggle)
 
